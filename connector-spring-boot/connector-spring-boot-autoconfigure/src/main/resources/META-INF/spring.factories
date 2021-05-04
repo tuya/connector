@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.tuya.connector.spring.boot.autoconfigure.ConnectorAutoConfiguration,\
+  com.tuya.connector.spring.boot.autoconfigure.ConnectorExportAutoConfiguration
