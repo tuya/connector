@@ -1,253 +1,160 @@
-# connector-framework
+[![license: Apache 2](https://img.shields.io/badge/license-Apache%202-green)](https://github.com/tuya/tuya-connector/blob/master/LICENSE 'License')
+![QQ群: ***](https://img.shields.io/badge/chat-QQ%E7%BE%A4%3A***-orange)
+![Version: 1.0.0](https://img.shields.io/badge/version-1.0.0-blue)
 
-### 快速开始
-#### SpringBoot集成
-##### 依赖
-```xml
-<dependency>
-  <groupId>com.tuya</groupId>
-  <artifactId>connector-spring-boot-starter</artifactId>
-  <version>${latest.version}</version>
-</dependency>
-```
-##### 配置
-```
-# required
-connector.api.base-url=http://localhost:8080
-```
-##### 使用
+`connector`框架通过简单的配置和灵活的扩展机制，将云端API映射成本地API，订阅云端消息分发为本地事件，使得开发者在云云对接（OpenAPI或者消息订阅）项目开发过程中，不需要花费过多精力关注云环境连接和请求处理过程，从而帮助开发者更好的聚焦在自身的业务逻辑上。
 
-1. 定义Connector接口
+### 快速开始（涂鸦云云对接推荐 [tuya-spring-boot-starter](https://github.com/tuya/tuya-connector) ）
+
+#### SpringBoot集成（推荐）
+
+1. 配置API数据源
+```
+connector.api.base-url=https://www.xxx.com
+```
+
+2. 定义`Connector`接口，添加扫描路径，直接注入`Connector`进行调用
 ```java
-public interface EchoConnector {
-    @GET("/test/springboot/echo/{s}")
-    String echo(@Path("s") String s);
-}
-```
-
-2. Application启动类添加Connector扫描路径
-```java
-@ConnectorScan(basePackages = "org.connector.api.demo.localdemo.connectors")
+@ConnectorScan(basePackages = "com.xxx.connector")
 @SpringBootApplication
 public class DemoApplication {
     public static void main(String[] args) {
         SpringApplication.run(DemoApplication.class, args);
     }
 }
-```
 
-3. 直接注入Connector即可调用
-```java
-@RestController
-public class EchoController {
+public interface Connector {
+    @GET("/test/{s}")
+    String test(@Path("s") String s);
+}
+
+@Service
+public class Service {
     @Autowired
-    private EchoConnector connector;
-
-    @RequestMapping("/echo/{s}")
-    public String echo(@PathVariable String s) {
-        return connector.echo(s);
+    private Connector connector;
+    
+    public String test(String s) {
+    	return connector.test(s);	
     }
 }
 ```
-#### maven项目
-##### 依赖
-```xml
-<dependency>
-  <groupId>com.tuya</groupId>
-  <artifactId>connector-api</artifactId>
-  <version>${latest.version}</version>
-</dependency>
-```
-##### 使用
 
-1. 定义Connector接口
+#### 普通Java项目配置
+根据数据源配置创建`ConnectorFactory`，通过`ConnectorFactory`加载`Connector`得到`Connector`代理，通过`Connector`代理类进行API调用。
 ```java
-public interface EchoConnector {
-    @GET("/test/springboot/echo/{s}")
-    String echo(@Path("s") String s);
+public interface Connector {
+    @GET("/test/{s}")
+    String test(@Path("s") String s);
+}
+
+public class Demo {
+	public static void main(String[] args) {
+        // initialize configuration
+        Configuration config = new Configuration();
+        ApiDataSource dataSource = ApiDataSource.DEFAULT_BUILDER.build();
+        dataSource.setBaseUrl("https://www.xxx.com");
+        config.setApiDataSource(dataSource);
+
+        // create ConnectorFactory
+        ConnectorFactory connectorFactory = new DefaultConnectorFactory(config);
+
+        // Load connector and create connector proxy
+        connector = connectorFactory.loadConnector(Connector.class);
+
+        // call API
+        String result = connector.test("hello");
+    }
 }
 ```
 
-2. 创建配置 -> 初始化工厂 -> 加载Connector接口
-```java
-// 初始化配置类
-Configuration config = new Configuration();
-ApiDataSource dataSource = ApiDataSource.DEFAULT_BUILDER.build();
-dataSource.setBaseUrl("http://localhost:8080");
-config.setDataSource(dataSource);
 
-// 基于配置创建Connector工厂
-ConnectorFactory connectorFactory = new DefaultConnectorFactory(config);
+### 主要特性
+- 统一设置Header
+- 自动获取和刷新token
+- 返回值兼容驼峰和下划线格式
+- 返回值兼容泛型模式（支持返回Result<T>，也支持直接返回T）
+- 错误码处理
+- 拦截器扩展
+- 云端restful API导出为本地restful API
+- 消息事件分发
 
-// 从工厂加载Connector接口
-connector = connectorFactory.loadConnector(EchoConnector.class);
-```
-### 架构设计
-#### IoTSaaSFramework分层
-![](src/main/resources/框架整体架构.png)
-#### 整体架构
-![image.png](src/main/resources/框架分层.jpg)
-#### connector-restful
-核心思想是基于注解的声明式API调用，类似MyBaits的Mapper接口声明机制，通过框架对Connector接口进行代理实现具体的请求过程。
-框架底层的Http调用目前的实现是委托给Retrofit2（底层依赖OhHttpClient），后续可能会考虑替换为自实现。
-![image.png](src/main/resources/restful模块设计.png)
-#### connector-messaging
-适用于PaaS消息云服务场景，应用通过客户端订阅监听消息进行消费，IoT场景下对消息的顺序性要求比较突出，connector-messaging模块的设计思想是客户端通过MQ client的单个Listener实例顺序监听收取消息，然后解析消息类型到对应的消息事件并通过事件广播器进行分发。
-开发者通过定义原始消息的分发逻辑以及定义各自类型的消息的Listener即可实现消息的消费。
-![image.png](src/main/resources/messaging模块设计.png)
-### 手册
-#### 配置
-| **配置项** | **描述** |
-| --- | --- |
-| connector.ak | OpenApi提供方的访问身份标识，比如access key |
-| connector.sk | OpenApi提供方的访问身份密钥，比如secret key |
-| connector.api.base-url | OpenApi基础url，必填 |
-| connector.auto-export | 是否自动导出Connector为本地Http服务 |
-| connector.api.ak | OpenApi提供方的访问身份标识，比如access key，优先级高于connector.ak |
-| connector.api.sk | OpenApi提供方的访问身份密钥，比如secret key，优先级高于connector.sk |
-| connector.api.auto-set-header | 自动设置请求头 |
-| connector.api.auto-refresh-token | token失效或者过期自动刷新 |
-| connector.api.context-manager | 上下文管理器 |
-| connector.api.token-manager | token管理器 |
-| connector.api.header-processor | 请求头处理器 |
-| connector.api.error-processor | 请求错误码处理 |
+### 设计思路
+1. 云端Restful API映射成本地`Connector`接口，本地`Connector`接口通过HTTP相关注解进行声明，框架在运行时通过创建`Connector`接口的代理完成真实的Restful API的请求处理过程。
+2. 借鉴了retrofit2项目，通过接口和注解方式访问云端API，目前底层直接委托给retrofit2实现请求处理
+3. 灵活的扩展机制：
+    1. 上下文管理器（ContextManager）
+    2. Token管理器（TokenManager）
+    3. Header处理器（HeaderProcessor）
+    4. 错误码处理器（ErrorProcessor）
+    5. 请求拦截器（ConnectorInterceptor）
+4. 顺序订阅云端统一消息模型，解析消息数据，识别并构建具体消息类型事件进行本地事件分发处理
 
-#### 注解
+### 框架整体架构
+![整体架构](src/main/resources/architect.jpg)
+![集成&扩展](src/main/resources/integration&extension.jpg)
+
+### 核心模块设计
+
+#### API连接器模型
+![连接器领域模型](src/main/resources/ddd.png)
+
+- **Config**
+
+框架透出的配置项和集成扩展点，比如URL连接、AK/SK、超时、连接池、日志、Token管理器、Header处理器、Context管理器
+
+- **Core**
+
+框架云云对接的实现模块，负责Connector的实现，即实际连接到云端RestfulAPI的请求响应处理逻辑
+
+- **Annotations**
+
+云云对接Restful风格API注解和解析，目前提供的注解有：GET、POST、PUT、DELETE、Header、HeaderMap、Headers、Body、Query、QueryMap、Path、Url
+
 | **注解** | **描述** | **示例** |
 | --- | --- | --- |
-| GET | HTTP GET 请求 | @GET(**"/test/annotations/get"**)<br>Boolean get(); |
-| POST | HTTP POST 请求 | @POST(**"/test/annotations/post"**)<br>Boolean post(); |
-| PUT | HTTP PUT 请求 | @PUT(**"/test/annotations/put"**)<br>Boolean put(); |
-| DELETE | HTTP DELETE 请求 | @DELETE(**"/test/annotations/delete"**)<br>Boolean delete(); |
-| Path | 请求路径参数映射 | @GET(**"/test/annotations/path/{path_param}"**)<br>String path(@Path(**"path_param"**) String pathParam); |
-| Query | 方法参数映射到请求url的query上 | @GET(**"/test/annotations/query"**)<br>String query(@Query(**"param"**) String param); |
-| QueryMap | 方法参数映射到请求url的query上 | @GET(**"/test/annotations/queryMap"**)<br>String queryMap(@QueryMap Map<String, Object> map); |
-| Header | 方法参数映射到请求头 | @GET(**"/test/annotations/header"**)<br>String header(@Header(**"headerKey"**) String header); |
-| Headers | 注解参数映射到请求头 | @Headers(**"headerKey:headerValue"**)<br>@GET(**"/test/annotations/headers"**)<br>String headers(); |
-| HeaderMap | 方法参数映射到请求头 | @GET(**"/test/annotations/headerMap"**)<br>String headerMap(@HeaderMap Map<String, String> headerMap); |
-| Url | 方法参数映射成请求url | @GET<br>String url(@Url String url); |
-| Body | 方法参数映射到请求体 | @POST(**"/test/annotations/body"**)<br>String body(@Body Object body); |
+| GET | HTTP GET 请求 | @GET(**"/test/annotations/get"**)<br />Boolean get(); |
+| POST | HTTP POST 请求 | @POST(**"/test/annotations/post"**)<br />Boolean post(); |
+| PUT | HTTP PUT 请求 | @PUT(**"/test/annotations/put"**)<br />Boolean put(); |
+| DELETE | HTTP DELETE 请求 | @DELETE(**"/test/annotations/delete"**)<br />Boolean delete(); |
+| Path | 请求路径参数映射 | @GET(**"/test/annotations/path/{path_param}"**)<br />String path(@Path(**"path_param"**) String pathParam); |
+| Query | 方法参数映射到请求url的query上 | @GET(**"/test/annotations/query"**)<br />String query(@Query(**"param"**) String param); |
+| QueryMap | 方法参数映射到请求url的query上 | @GET(**"/test/annotations/queryMap"**)<br />String queryMap(@QueryMap  Map<String, Object> map);  |
+| Header | 方法参数映射到请求头 | @GET(**"/test/annotations/header"**)<br />String header(@Header(**"headerKey"**) String header); |
+| Headers | 注解参数映射到请求头 | @Headers(**"headerKey:headerValue"**)<br />@GET(**"/test/annotations/headers"**)<br />String headers(); |
+| HeaderMap | 方法参数映射到请求头 | @GET(**"/test/annotations/headerMap"**)<br />String headerMap(@HeaderMap  Map<String, String> headerMap);  |
+| Url | 方法参数映射成请求url | @GET <br />String url(@Url String url);  |
+| Body | 方法参数映射到请求体 | @POST(**"/test/annotations/body"**)<br />String body(@Body Object body);  |
 
-#### 扩展
+- Interceptor&Extension
 
-- ContextManager
+框架扩展点，包括请求拦截器、错误码处理器。
 
-Connector API请求过程中内置了上下文信息，当开启自动刷新token或者自动设置请求头机制时，上下文信息是必要的，可以通过上下文管理器进行上下文的开启（start()）、清除（clear()）和查询（get()）。
-```java
-public abstract class ContextManager<T extends Context> {
-    protected final Configuration configuration;
+#### Messaging连接器模型
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/130426/1617203258286-90a4e4df-e720-471d-bb27-d2dad8717954.png#align=left&display=inline&height=211&margin=%5Bobject%20Object%5D&name=image.png&originHeight=422&originWidth=746&size=18514&status=done&style=none&width=373)
 
-    public ContextManager(Configuration configuration) {
-        this.configuration = configuration;
-    }
+- MessageDataSource
+  消息数据源配置类，包含需要订阅的消息的地址、ak和sk。
 
-    public abstract T start();
+- MessageDispatcher
+  消息分发器，不同的消息服务通过实现此消息分发器监听云端消息进行本地事件分发。
 
-    public abstract void clear();
+- MessageEvent
+  消息事件类型，每个消息都通过type唯一标识，通过继承维护各自的数据结构。
 
-    public abstract T get();
-}
-```
+### 模块
+- connector-api: 连接云端RestfulAPI
+- connector-messaging: 订阅云端消息
+- connector-spring: 与Spring集成
+- connector-spring-boot: 与SpringBoot集成
+- connector-assist: 辅助模块，提供单元测试环境
 
-
-- TokenManager
-
-当OpenApi的提供方使用了安全授权方式的请求机制时，可以基于TokenManager快速实现token管理，TokenManager声明了获取token（getToken()）、刷新token（refreshToken()）和获取缓存的token（getCachedToken()）；当之前的token失效或者过期时，如果开启了自动刷新token配置项，则框架会自动进行刷新token后重新请求Connector返回结果。
-getToken和refreshToken一般是对应OpenApi提供方对应的tokenApi，一般建议将获取到的token持久化到本地并缓存起来，提供后续的Api调用时使用。
-```java
-public abstract class TokenManager<T extends Token> {
-
-    protected final Configuration configuration;
-
-    public TokenManager(Configuration configuration) {
-        this.configuration = configuration;
-    }
-
-    public abstract T getToken();
-
-    public abstract T refreshToken();
-
-    /**
-     * Overrid this method is recommended strongly.
-     * @return
-     */
-    public T getCachedToken() {
-        return getToken();
-    }
-
-}
-```
-
-
-- HeaderProcessor
-
-一般OpenApi提供方的请求头格式都相对比较固定，对于这类数据源的OpenApi，可以通过开启自动设置请求头并提供HeaderProcessor的具体实现来统一达到请求头的设置。
-HeaderProcessor声明了签名方法，可以针对不同的OpenApi提供方实现对应的签名算法。
-```java
-public abstract class HeaderProcessor {
-
-    protected final Configuration configuration;
-
-    public HeaderProcessor(Configuration configuration) {
-        this.configuration = configuration;
-    }
-
-    public abstract Map<String, String> value(URL url);
-
-    public abstract String sign(String content);
-
-}
-```
-
-
-- ErrorProcessor
-
-当请求OpenApi后的响应结果返回错误码时，可以通过自定义ErrorProcessor的实现类来针对不同的错误码进行相应的处理，比如Token失效时，自动刷新token后重新请求。
-```java
-public interface ErrorProcessor {
-    Object process(ErrorInfo errorInfo, Invocation invocation, Context context);
-
-    String getErrorCode();
-}
-```
-
-
-- ConnectorInterceptor
-
-框架内置了ConnectorInterceptor请求拦截器，以满足应用针对Connector Api请求前后的插件需求。
-```java
-@FunctionalInterface
-public interface ConnectorInterceptor {
-    Object intercept(Invocation invocation) throws Throwable;
-}
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class Invocation {
-    Object target;
-    Method method;
-    Object[] args;
-
-    public Object proceed() throws InvocationTargetException, IllegalAccessException {
-        return method.invoke(target, args);
-    }
-}
-
-public class Plugin implements InvocationHandler {
-
-    private final Object target;
-    private final ConnectorInterceptor interceptor;
-
-    public Plugin(Object target, ConnectorInterceptor interceptor) {
-        this.target = target;
-        this.interceptor = interceptor;
-    }
-
-    @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        return interceptor.intercept(new Invocation(target, method, args));
-    }
-}
-```
+### 计划
+- 请求参数兼容驼峰和下划线格式
+- 提供Mock机制
+- 多数据源
+- 多语言
+- 熔断/降级
+- 缓存
+- 异步
+- 配合插件基于OpenAPI一键生成本地代码
+- 其他开发语言实现
