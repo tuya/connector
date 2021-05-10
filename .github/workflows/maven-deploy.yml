@@ -4,6 +4,7 @@ on:
     branches:
       - dev
       - release
+      - feature_workflow
 jobs:
   build:
     runs-on: ubuntu-latest
