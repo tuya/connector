@@ -83,10 +83,15 @@
 
     <distributionManagement>
         <repository>
-            <id>GitHub</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/tuya/maven-repo</url>
+            <id>maven</id>
+            <name>maven tuya release</name>
+            <url>https://maven-other.tuya.com/repository/maven-releases/</url>
         </repository>
+        <snapshotRepository>
+            <id>maven</id>
+            <name>maven tuya snapshot</name>
+            <url>https://maven-other.tuya.com/repository/maven-snapshots/</url>
+        </snapshotRepository>
     </distributionManagement>
 
 </project>
