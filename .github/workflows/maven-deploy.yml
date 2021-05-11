@@ -17,8 +17,8 @@ jobs:
         server-id: maven
         server-username: MAVEN_USERNAME
         server-password: MAVEN_CENTRAL_TOKEN
-    - name: Publish Maven
-      run: mvn deploy
+    - name: Maven Repository Publish
+      run: mvn -e clean deploy -Dmaven.test.skip=true
       env:
-        MAVEN_USERNAME: ${{ secrets.MAVEN_USER_NAME }}
+        MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
         MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_PASSWORD }}
