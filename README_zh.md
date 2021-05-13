@@ -1,3 +1,5 @@
+[English](README.md) | [中文版](README_zh.md)
+
 [![license: Apache 2](https://img.shields.io/badge/license-Apache%202-green)](https://github.com/tuya/tuya-connector/blob/master/LICENSE 'License')
 ![Version: 1.0.0](https://img.shields.io/badge/version-1.0.0-blue)
 

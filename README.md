@@ -1,5 +1,8 @@
+[English](README.md) | [中文版](README_zh.md)
+
 [![License: Apache 2](https://img.shields.io/badge/license-Apache%202-green)](https://github.com/tuya/tuya-connector/blob/master/LICENSE 'License')
 ![Version: 1.0.0](https://img.shields.io/badge/version-1.0.0-blue)
+
 
 The `connector` framework maps cloud APIs to local APIs based on simple configurations and flexible extension mechanisms. You can subscribe to the distribution of cloud messages as local events. You can put all the focus on business logic without taking care of server-side programming nor relational databases. The OpenAPI or message subscription process is simplified, so you can focus on service logic and promote development efficiency.
 
