@@ -1,5 +1,4 @@
 [![license: Apache 2](https://img.shields.io/badge/license-Apache%202-green)](https://github.com/tuya/tuya-connector/blob/master/LICENSE 'License')
-![QQ群: ***](https://img.shields.io/badge/chat-QQ%E7%BE%A4%3A***-orange)
 ![Version: 1.0.0](https://img.shields.io/badge/version-1.0.0-blue)
 
 `connector`框架通过简单的配置和灵活的扩展机制，将云端API映射成本地API，订阅云端消息分发为本地事件，使得开发者在云云对接（OpenAPI或者消息订阅）项目开发过程中，不需要花费过多精力关注云环境连接和请求处理过程，从而帮助开发者更好的聚焦在自身的业务逻辑上。

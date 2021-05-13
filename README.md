@@ -1,19 +1,18 @@
-[![license: Apache 2](https://img.shields.io/badge/license-Apache%202-green)](https://github.com/tuya/tuya-connector/blob/master/LICENSE 'License')
-![Gitter: ***](https://img.shields.io/badge/chat-Gitter-orange)
+[![License: Apache 2](https://img.shields.io/badge/license-Apache%202-green)](https://github.com/tuya/tuya-connector/blob/master/LICENSE 'License')
 ![Version: 1.0.0](https://img.shields.io/badge/version-1.0.0-blue)
 
-`connector`框架通过简单的配置和灵活的扩展机制，将云端API映射成本地API，订阅云端消息分发为本地事件，使得开发者在云云对接（OpenAPI或者消息订阅）项目开发过程中，不需要花费过多精力关注云环境连接和请求处理过程，从而帮助开发者更好的聚焦在自身的业务逻辑上。
+The `connector` framework maps cloud APIs to local APIs based on simple configurations and flexible extension mechanisms. You can subscribe to the distribution of cloud messages as local events. You can put all the focus on business logic without taking care of server-side programming nor relational databases. The OpenAPI or message subscription process is simplified, so you can focus on service logic and promote development efficiency.
 
-### 快速开始（涂鸦云云对接推荐 [tuya-spring-boot-starter](https://github.com/tuya/tuya-connector) ）
+### Quick start ([tuya-spring-boot-starter](https://github.com/tuya/tuya-connector) recommended for cloud development)
 
-#### SpringBoot集成（推荐）
+#### Integrate Spring Boot (recommended)
 
-1. 配置API数据源
+1. Configure API data source.
 ```
 connector.api.base-url=https://www.xxx.com
 ```
 
-2. 定义`Connector`接口，添加扫描路径，直接注入`Connector`进行调用
+2. Define the `Connector` API, add a scanning path, and then inject `Connector`.
 ```java
 @ConnectorScan(basePackages = "com.xxx.connector")
 @SpringBootApplication
@@ -39,8 +38,8 @@ public class Service {
 }
 ```
 
-#### 普通Java项目配置
-根据数据源配置创建`ConnectorFactory`，通过`ConnectorFactory`加载`Connector`得到`Connector`代理，通过`Connector`代理类进行API调用。
+#### Configure a generic Java project
+Create a `ConnectorFactory` based on the data source configurations, load `Connector` with `ConnectorFactory` to get the `Connector` proxy, and then make API requests by using the `Connector` proxy class.
 ```java
 public interface Connector {
     @GET("/test/{s}")
@@ -68,93 +67,93 @@ public class Demo {
 ```
 
 
-### 主要特性
-- 统一设置Header
-- 自动获取和刷新token
-- 返回值兼容驼峰和下划线格式
-- 返回值兼容泛型模式（支持返回Result<T>，也支持直接返回T）
-- 错误码处理
-- 拦截器扩展
-- 云端restful API导出为本地restful API
-- 消息事件分发
+### Features
+- Centralized management of headers.
+- Automatically gets and refreshes tokens.
+- Return values are compatible with camel case and underscores (_).
+- Return values are compatible with the generics mode. The result or <T>`T` can be returned.
+- Processes error codes.
+- Supports the interceptor extension.
+- Exports a cloud RESTful API as a local RESTful API.
+- Distributes messages and events.
 
-### 设计思路
-1. 云端Restful API映射成本地`Connector`接口，本地`Connector`接口通过HTTP相关注解进行声明，框架在运行时通过创建`Connector`接口的代理完成真实的Restful API的请求处理过程。
-2. 借鉴了retrofit2项目，通过接口和注解方式访问云端API，目前底层直接委托给retrofit2实现请求处理
-3. 灵活的扩展机制：
-    1. 上下文管理器（ContextManager）
-    2. Token管理器（TokenManager）
-    3. Header处理器（HeaderProcessor）
-    4. 错误码处理器（ErrorProcessor）
-    5. 请求拦截器（ConnectorInterceptor）
-4. 顺序订阅云端统一消息模型，解析消息数据，识别并构建具体消息类型事件进行本地事件分发处理
+### Design description
+1. The cloud RESTful API is mapped to the local `Connector` API. The local `Connector` API is declared with HTTP annotations. The framework creates a proxy for the `Connector` API at runtime to process calls to the cloud RESTful API.
+2. Retrofit 2 is used to process underlying requests. Similar to Retrofit 2 projects, cloud APIs are called by API operations and annotated methods.
+3. Flexible extension mechanisms are supported:
+   i. ContextManager
+   ii. TokenManager
+   iii. HeaderProcessor
+   iv. ErrorProcessor
+   v. ConnectorInterceptor
+4. The framework can be used to sequentially subscribe to the unified cloud messaging model, parse message data, identify and construct specific message events, and then distribute local events.
 
-### 框架整体架构
-![整体架构](src/main/resources/architect.jpg)
-![集成&扩展](src/main/resources/integration@extension.jpg)
+### Architecture of the framework
+![Integration of the framework](src/main/resources/architect.jpg)
+![Integration and extensions](src/main/resources/integration&extension.jpg)
 
-### 核心模块设计
+### Core module design
 
-#### API连接器模型
-![连接器领域模型](src/main/resources/ddd.png)
+#### API connector model
+![API connector model](src/main/resources/ddd.png)
 
 - **Config**
 
-框架透出的配置项和集成扩展点，比如URL连接、AK/SK、超时、连接池、日志、Token管理器、Header处理器、Context管理器
+Includes the configuration items and integrated extensions, such as the URL connections, access key ID (AK) and secret access key (SK), timeout, connection pool, logs, TokenManager, HeaderProcessor, and ContextManager.
 
 - **Core**
 
-框架云云对接的实现模块，负责Connector的实现，即实际连接到云端RestfulAPI的请求响应处理逻辑
+Implements cloud development with the Connector framework and provides the logic to process and respond to cloud RESTful API requests.
 
 - **Annotations**
 
-云云对接Restful风格API注解和解析，目前提供的注解有：GET、POST、PUT、DELETE、Header、HeaderMap、Headers、Body、Query、QueryMap、Path、Url
+RESTful API annotations and parsing for cloud development. The following annotations are available: GET, POST, PUT, DELETE, Header, HeaderMap, Headers, Body, Query, QueryMap, Path, and Url.
 
-| **注解** | **描述** | **示例** |
+| **Annotation** | **Description** | **Example** |
 | --- | --- | --- |
-| GET | HTTP GET 请求 | @GET(**"/test/annotations/get"**)<br />Boolean get(); |
-| POST | HTTP POST 请求 | @POST(**"/test/annotations/post"**)<br />Boolean post(); |
-| PUT | HTTP PUT 请求 | @PUT(**"/test/annotations/put"**)<br />Boolean put(); |
-| DELETE | HTTP DELETE 请求 | @DELETE(**"/test/annotations/delete"**)<br />Boolean delete(); |
-| Path | 请求路径参数映射 | @GET(**"/test/annotations/path/{path_param}"**)<br />String path(@Path(**"path_param"**) String pathParam); |
-| Query | 方法参数映射到请求url的query上 | @GET(**"/test/annotations/query"**)<br />String query(@Query(**"param"**) String param); |
-| QueryMap | 方法参数映射到请求url的query上 | @GET(**"/test/annotations/queryMap"**)<br />String queryMap(@QueryMap  Map<String, Object> map);  |
-| Header | 方法参数映射到请求头 | @GET(**"/test/annotations/header"**)<br />String header(@Header(**"headerKey"**) String header); |
-| Headers | 注解参数映射到请求头 | @Headers(**"headerKey:headerValue"**)<br />@GET(**"/test/annotations/headers"**)<br />String headers(); |
-| HeaderMap | 方法参数映射到请求头 | @GET(**"/test/annotations/headerMap"**)<br />String headerMap(@HeaderMap  Map<String, String> headerMap);  |
-| Url | 方法参数映射成请求url | @GET <br />String url(@Url String url);  |
-| Body | 方法参数映射到请求体 | @POST(**"/test/annotations/body"**)<br />String body(@Body Object body);  |
+| GET | HTTP GET method | @GET(**"/test/annotations/get"**)<br />Boolean get(); |
+| POST | HTTP POST method | @POST(**"/test/annotations/post"**)<br />Boolean post(); |
+| PUT | HTTP PUT method | @PUT(**"/test/annotations/put"**)<br />Boolean put(); |
+| DELETE | HTTP DELETE method | @DELETE(**"/test/annotations/delete"**)<br />Boolean delete(); |
+| Path | Mapping of the path parameter in the request | @GET(**"/test/annotations/path/{path_param}"**)<br />String path(@Path(**"path_param"**) String pathParam); |
+| Query | Mapping between the method parameter and the query string of the request URL | @GET(**"/test/annotations/query"**)<br />String query(@Query(**"param"**) String param); |
+| QueryMap | Mapping between the method parameter and the query string of the request URL | @GET(**"/test/annotations/queryMap"**)<br />String queryMap(@QueryMap  Map<String, Object> map); |
+| Header | Mapping between the method parameter and the request header | @GET(**"/test/annotations/header"**)<br />String header(@Header(**"headerKey"**) String header); |
+| Headers | Mapping between the annotations parameter and the request headers | @Headers(**"headerKey:headerValue"**)<br />@GET(**"/test/annotations/headers"**)<br />String headers(); |
+| HeaderMap | Mapping between the method parameter and the request header | @GET(**"/test/annotations/headerMap"**)<br />String headerMap(@HeaderMap  Map<String, String> headerMap); |
+| Url | Mapping between the method parameter and the request URL | @GET <br />String url(@Url String url); |
+| Body | Mapping between the method parameter and the request body | @POST(**"/test/annotations/body"**)<br />String body(@Body Object body); |
 
 - Interceptor&Extension
 
-框架扩展点，包括请求拦截器、错误码处理器。
+The extensions to the framework, including ConnectorInterceptor and ErrorProcessor.
 
-#### Messaging连接器模型
-![image.png](https://cdn.nlark.com/yuque/0/2021/png/130426/1617203258286-90a4e4df-e720-471d-bb27-d2dad8717954.png#align=left&display=inline&height=211&margin=%5Bobject%20Object%5D&name=image.png&originHeight=422&originWidth=746&size=18514&status=done&style=none&width=373)
+#### Messaging connector model
+![Messaging connector model](https://cdn.nlark.com/yuque/0/2021/png/130426/1617203258286-90a4e4df-e720-471d-bb27-d2dad8717954.png#align=left&display=inline&height=211&margin=%5Bobject%20Object%5D&name=image.png&originHeight=422&originWidth=746&size=18514&status=done&style=none&width=373)
 
 - MessageDataSource
-  消息数据源配置类，包含需要订阅的消息的地址、ak和sk。
+  The class to configure message data sources, such as the address, access key ID, and secret access key of the messages to be subscribed to.
 
 - MessageDispatcher
-  消息分发器，不同的消息服务通过实现此消息分发器监听云端消息进行本地事件分发。
+  The message dispatcher that is used to listen for cloud messages and distribute local events in different messaging services.
 
 - MessageEvent
-  消息事件类型，每个消息都通过type唯一标识，通过继承维护各自的数据结构。
+  The type of message event. Each message is identified by `type`. The data structure is maintained by inheritance.
 
-### 模块
-- connector-api: 连接云端RestfulAPI
-- connector-messaging: 订阅云端消息
-- connector-spring: 与Spring集成
-- connector-spring-boot: 与SpringBoot集成
-- connector-assist: 辅助模块，提供单元测试环境
+### Modules
+- connector-api: connects to RESTful APIs.
+- connector-messaging: subscribes to cloud messages.
+- connector-spring: integrates with Spring.
+- connector-spring-boot: integrates with Spring Boot.
+- connector-assist: the assistant module to provide the unit test environment.
 
-### 计划
-- 请求参数兼容驼峰和下划线格式
-- 提供Mock机制
-- 多数据源
-- 多语言
-- 熔断/降级
-- 缓存
-- 异步
-- 配合插件基于OpenAPI一键生成本地代码
-- 其他开发语言实现
+### Function plan
+- Request parameters compatible with camel case and underscores (_)
+- Mock mechanism
+- Multiple data sources
+- Multilingual support
+- Circuit breaker and downgrade
+- Cache
+- Asynchronous processing
+- Automatic generation of local code based on OpenAPI and specific plug-ins.
+- Implementation for other programming languages
