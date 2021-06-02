@@ -7,6 +7,8 @@ import com.tuya.connector.api.token.TokenManager;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Objects;
+
 /**
  * <p> TODO
  *
@@ -35,6 +37,33 @@ public class ApiDataSource {
     String baseUrl;
     String ak;
     String sk;
+
+    static ThreadLocal<String> currentAk = new ThreadLocal<>();
+    static ThreadLocal<String> currentSk = new ThreadLocal<>();
+
+    public String getAk() {
+        if (Objects.nonNull(currentAk) && currentAk.get() != null) {
+            return currentAk.get();
+        }
+        return ak;
+    }
+
+    public String getSk() {
+        if (Objects.nonNull(currentSk) && currentSk.get() != null) {
+            return currentSk.get();
+        }
+        return sk;
+    }
+
+    public void setAk(String ak) {
+        this.ak = ak;
+        currentAk.set(ak);
+    }
+
+    public void setSk(String sk) {
+        this.sk = sk;
+        currentSk.set(sk);
+    }
 
     public ApiDataSource(String baseUrl) {
         this.baseUrl = baseUrl;
