@@ -23,6 +23,11 @@ public class OneMessageDispatcher implements MessageDispatcher, ApplicationConte
     }
 
     @Override
+    public boolean stop() {
+        return false;
+    }
+
+    @Override
     public MessageDataSource getMsgDataSource() {
         return null;
     }

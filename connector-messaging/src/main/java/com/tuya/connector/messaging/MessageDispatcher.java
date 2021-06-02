@@ -13,6 +13,12 @@ public interface MessageDispatcher {
     void dispatch();
 
     /**
+     * stop dispatch
+     * @return
+     */
+    boolean stop();
+
+    /**
      * message Datasource
      * @return
      */
