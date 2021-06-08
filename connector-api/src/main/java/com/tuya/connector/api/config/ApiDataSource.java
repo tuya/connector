@@ -55,6 +55,11 @@ public class ApiDataSource {
         return sk;
     }
 
+    public void clear() {
+        currentAk.remove();
+        currentSk.remove();
+    }
+
     public void setAk(String ak) {
         this.ak = ak;
         currentAk.set(ak);
