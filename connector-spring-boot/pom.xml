@@ -2,29 +2,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>connector</artifactId>
         <groupId>com.tuya</groupId>
         <version>1.0.1-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>connector-spring-boot</artifactId>
     <packaging>pom</packaging>
+
     <modules>
         <module>connector-spring-boot-autoconfigure</module>
         <module>connector-spring-boot-starter</module>
     </modules>
-
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <slf4j-api.version>1.7.25</slf4j-api.version>
-        <logback.version>1.2.3</logback.version>
-        <lombok.version>1.18.8</lombok.version>
-        <spring-boot.version>2.1.1.RELEASE</spring-boot.version>
-        <junit-jupiter.version>5.7.0</junit-jupiter.version>
-    </properties>
 
     <dependencyManagement>
         <dependencies>
@@ -53,18 +44,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-autoconfigure</artifactId>
-                <version>${spring-boot.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-configuration-processor</artifactId>
-                <version>${spring-boot.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>com.tuya</groupId>
                 <artifactId>connector-api</artifactId>
                 <version>${project.version}</version>
@@ -77,11 +56,9 @@
             </dependency>
 
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <groupId>com.tuya</groupId>
+                <artifactId>connector-spring-boot-autoconfigure</artifactId>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
