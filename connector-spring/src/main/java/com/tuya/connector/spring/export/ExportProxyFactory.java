@@ -8,6 +8,7 @@ import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ConstPool;
 import javassist.bytecode.ParameterAnnotationsAttribute;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ import java.util.stream.IntStream;
  * @author qiufeng.yu@tuya.com
  * @since 2021/2/7 11:41 上午
  */
+@Slf4j
 public class ExportProxyFactory {
 
     private static final String RETURN_BODY = "{return this.connector.%s(%s);}";
@@ -51,6 +53,10 @@ public class ExportProxyFactory {
         }
 
         CtClass controller = pool.getCtClass(controllerName);
+        if (controller.isFrozen()) {
+            log.warn("export class[{}] is frozen, defrost it", controllerName);
+            controller.defrost();
+        }
         ConstPool constPool = controller.getClassFile().getConstPool();
 
         // add class annotation: @RestController
@@ -114,7 +120,6 @@ public class ExportProxyFactory {
             controller.addMethod(controllerMethod);
         }
 
-        controller.writeFile(".");
         return controller.toClass();
     }
 
