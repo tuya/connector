@@ -119,7 +119,6 @@ public class ExportProxyFactory {
 
             controller.addMethod(controllerMethod);
         }
-
         return controller.toClass();
     }
 
