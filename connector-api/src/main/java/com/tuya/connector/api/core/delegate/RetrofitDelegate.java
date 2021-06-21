@@ -118,7 +118,6 @@ public class RetrofitDelegate implements ProxyDelegate {
         ClassPool pool = Utils.CLASS_POOL;
 
         String connectorName = connectorInterface.getName();
-        // TODO 没加insertClassPath 在tomcat 去跑的话会报javassist.NotFoundException，所以需要处理下
         ClassClassPath classPath = new ClassClassPath(connectorInterface);
         pool.insertClassPath(classPath);
         CtClass connector = pool.getCtClass(connectorName);
@@ -134,6 +133,10 @@ public class RetrofitDelegate implements ProxyDelegate {
             pool.makeInterface(serviceName);
         }
         CtClass service = pool.getCtClass(serviceName);
+        if (service.isFrozen()) {
+            log.warn("delegate class[{}] is frozen, defrost it", serviceName);
+            service.defrost();
+        }
         ConstPool serviceConstPool = service.getClassFile().getConstPool();
         CtClass call = pool.getCtClass(CALL_CLASS);
 
