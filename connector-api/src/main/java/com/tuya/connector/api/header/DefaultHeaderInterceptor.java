@@ -3,11 +3,15 @@ package com.tuya.connector.api.header;
 import com.tuya.connector.api.context.Context;
 import com.tuya.connector.api.context.ContextManager;
 import com.tuya.connector.api.exceptions.ConnectorException;
+import com.tuya.connector.api.model.HttpRequest;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
+import okio.Buffer;
+import okio.BufferedSink;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Objects;
 
@@ -33,8 +37,18 @@ public class DefaultHeaderInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Context ctx = contextManager.get();
         checkCtx(ctx);
+        Request request = chain.request();
 
-        Map<String, String> headerMap = headerProcessor.value(chain.request().url().url());
+        BufferedSink sink = new Buffer();
+        request.body().writeTo(sink);
+        HttpRequest httpRequest = HttpRequest.builder()
+                .httpMethod(request.method())
+                .headers(request.headers().toMultimap())
+                .url(request.url().url())
+                .body(sink.buffer().readByteArray())
+                .build();
+        Map<String, String> headerMap = headerProcessor.value(httpRequest);
+
         headerMap.put("__source", "Java");
         Request.Builder requestBuilder = chain.request().newBuilder();
         headerMap.forEach(requestBuilder::addHeader);

@@ -1,6 +1,7 @@
 package com.tuya.connector.api.header;
 
 import com.tuya.connector.api.config.Configuration;
+import com.tuya.connector.api.model.HttpRequest;
 
 import java.net.URL;
 import java.util.Map;
@@ -15,10 +16,10 @@ public interface HeaderProcessor {
 
     /**
      * build header map from different url
-     * @param url current request url
+     * @param request current request
      * @return
      */
-    Map<String, String> value(URL url);
+    Map<String, String> value(HttpRequest request);
 
     /**
      * header sign

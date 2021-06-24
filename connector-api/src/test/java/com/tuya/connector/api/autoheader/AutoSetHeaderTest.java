@@ -7,6 +7,7 @@ import com.tuya.connector.api.context.ContextManager;
 import com.tuya.connector.api.core.ConnectorFactory;
 import com.tuya.connector.api.core.DefaultConnectorFactory;
 import com.tuya.connector.api.header.HeaderProcessor;
+import com.tuya.connector.api.model.HttpRequest;
 import com.tuya.connector.api.token.Token;
 import com.tuya.connector.api.token.TokenManager;
 import org.junit.jupiter.api.BeforeAll;
@@ -38,7 +39,7 @@ public class AutoSetHeaderTest {
 
         HeaderProcessor headerProcessor = new HeaderProcessor() {
             @Override
-            public Map<String, String> value(URL url) {
+            public Map<String, String> value(HttpRequest request) {
                 Map<String, String> map = new HashMap<>();
                 map.put("autoheader", "enable");
                 return map;
