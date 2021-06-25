@@ -6,12 +6,12 @@ import com.tuya.connector.api.exceptions.ConnectorException;
 import com.tuya.connector.api.model.HttpRequest;
 import okhttp3.Interceptor;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okio.Buffer;
 import okio.BufferedSink;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Objects;
 
@@ -40,7 +40,10 @@ public class DefaultHeaderInterceptor implements Interceptor {
         Request request = chain.request();
 
         BufferedSink sink = new Buffer();
-        request.body().writeTo(sink);
+        RequestBody body = request.body();
+        if (body != null) {
+            body.writeTo(sink);
+        }
         HttpRequest httpRequest = HttpRequest.builder()
                 .httpMethod(request.method())
                 .headers(request.headers().toMultimap())
@@ -51,8 +54,18 @@ public class DefaultHeaderInterceptor implements Interceptor {
 
         headerMap.put("__source", "Java");
         Request.Builder requestBuilder = chain.request().newBuilder();
+        //okhttp添加header时，不能添加value为null的header
+        nullToEmptyForMapValue(headerMap);
         headerMap.forEach(requestBuilder::addHeader);
         return chain.proceed(requestBuilder.build());
+    }
+
+    private void nullToEmptyForMapValue(Map<String,String> map){
+        map.forEach((k,v)->{
+            if(v==null){
+                map.put(k,"");
+            }
+        });
     }
 
     private void checkCtx(Context ctx) {
@@ -60,7 +73,5 @@ public class DefaultHeaderInterceptor implements Interceptor {
             throw new ConnectorException("ConnectorContext required not null when adding default headers");
         }
     }
-
-
 
 }
