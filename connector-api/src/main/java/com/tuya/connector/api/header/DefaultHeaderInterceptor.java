@@ -54,7 +54,7 @@ public class DefaultHeaderInterceptor implements Interceptor {
 
         headerMap.put("__source", "Java");
         Request.Builder requestBuilder = chain.request().newBuilder();
-        //okhttp添加header时，不能添加value为null的header
+        //okhttp cannot add null value header
         nullToEmptyForMapValue(headerMap);
         headerMap.forEach(requestBuilder::addHeader);
         return chain.proceed(requestBuilder.build());
