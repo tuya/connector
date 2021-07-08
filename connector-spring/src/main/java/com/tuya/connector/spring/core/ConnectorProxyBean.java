@@ -79,7 +79,9 @@ public class ConnectorProxyBean<T> implements FactoryBean<T>, ApplicationContext
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof ContextRefreshedEvent) {
-            connectorProxy = connectorFactory.loadConnector(connector);
+            if (Objects.isNull(connectorProxy)) {
+                connectorProxy = connectorFactory.loadConnector(connector);
+            }
         }
     }
 }
