@@ -38,8 +38,8 @@ public class ApiDataSource {
     String ak;
     String sk;
 
-    static ThreadLocal<String> currentAk = new ThreadLocal<>();
-    static ThreadLocal<String> currentSk = new ThreadLocal<>();
+    static ThreadLocal<String> currentAk = new InheritableThreadLocal<>();
+    static ThreadLocal<String> currentSk = new InheritableThreadLocal<>();
 
     public String getAk() {
         if (Objects.nonNull(currentAk) && currentAk.get() != null) {
