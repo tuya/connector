@@ -56,16 +56,21 @@ public class RetrofitDelegate implements ProxyDelegate {
 
     private static volatile Retrofit retrofitClient;
 
+    /**
+     * derivedConnector is generated
+     * */
+    private static volatile boolean retrofitServiceClassCreated;
+
     public RetrofitDelegate(@NonNull Configuration configuration, @NonNull Class<?> connector) {
         this.configuration = configuration;
         this.connector = connector;
-        createRetrofitService();
     }
 
     @SuppressWarnings({"rawtypes", "unchecked", "ConstantConditions"})
     @SneakyThrows
     @Override
     public Object execute(Method method, Object[] args) {
+        createRetrofitServiceIfNeed();
         String methodName = method.getName();
         Class<?>[] parameterTypes = method.getParameterTypes();
         Method delegatedMethod = service.getClass().getDeclaredMethod(methodName, parameterTypes);
@@ -237,12 +242,18 @@ public class RetrofitDelegate implements ProxyDelegate {
         return destGenericSignature;
     }
 
-    private void createRetrofitService() {
-        if (Objects.isNull(derivedConnector)) {
-            derivedConnector = deriveFrom(connector);
+    private void createRetrofitServiceIfNeed() {
+        if(!retrofitServiceClassCreated){
+            synchronized (connector){
+                if(!retrofitServiceClassCreated){
+                    //if throws a exception?
+                    derivedConnector = deriveFrom(connector);
+                    Retrofit retrofit = getGlobalRetrofit();
+                    service = retrofit.create(derivedConnector);
+                    retrofitServiceClassCreated = true;
+                }
+            }
         }
-        Retrofit retrofit = getGlobalRetrofit();
-        service = retrofit.create(derivedConnector);
     }
 
     private Retrofit getGlobalRetrofit() {
