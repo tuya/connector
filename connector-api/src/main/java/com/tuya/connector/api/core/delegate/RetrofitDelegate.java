@@ -31,7 +31,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -56,10 +58,8 @@ public class RetrofitDelegate implements ProxyDelegate {
 
     private static volatile Retrofit retrofitClient;
 
-    /**
-     * derivedConnector is generated
-     * */
-    private static volatile boolean retrofitServiceClassCreated;
+    /**store connector classes which has created retrofit service class*/
+    private static Map<Class,Class> retrofitConnectors = new ConcurrentHashMap<>();
 
     public RetrofitDelegate(@NonNull Configuration configuration, @NonNull Class<?> connector) {
         this.configuration = configuration;
@@ -243,14 +243,13 @@ public class RetrofitDelegate implements ProxyDelegate {
     }
 
     private void createRetrofitServiceIfNeed() {
-        if(!retrofitServiceClassCreated){
+        if(!retrofitConnectors.containsKey(connector)){
             synchronized (connector){
-                if(!retrofitServiceClassCreated){
-                    //if throws a exception?
+                if(!retrofitConnectors.containsKey(connector)){
                     derivedConnector = deriveFrom(connector);
                     Retrofit retrofit = getGlobalRetrofit();
                     service = retrofit.create(derivedConnector);
-                    retrofitServiceClassCreated = true;
+                    retrofitConnectors.put(connector,connector);
                 }
             }
         }
