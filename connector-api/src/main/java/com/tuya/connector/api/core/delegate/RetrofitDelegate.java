@@ -53,8 +53,8 @@ public class RetrofitDelegate implements ProxyDelegate {
     private final Configuration configuration;
     private final Class<?> connector;
 
-    private Class<?> derivedConnector;
-    private Object service;
+    private volatile Class<?> derivedConnector;
+    private volatile Object service;
 
     private static volatile Retrofit retrofitClient;
 
