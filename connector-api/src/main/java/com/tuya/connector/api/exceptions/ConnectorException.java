@@ -10,7 +10,6 @@ public class ConnectorException extends RuntimeException {
 
     private static final long serialVersionUID = 3890598182855130507L;
 
-
     public ConnectorException(String message, Throwable cause) {
         super(message, cause);
     }

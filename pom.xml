@@ -7,7 +7,7 @@
     <groupId>com.tuya</groupId>
     <artifactId>connector</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.4</version>
+    <version>1.0.6</version>
     <modules>
         <module>connector-api</module>
         <module>connector-messaging</module>
