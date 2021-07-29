@@ -31,7 +31,7 @@ public class ConnectorProxy<T> implements InvocationHandler, Serializable {
     /**
      * 委托给实际API调用的实现者，目前基于Retrofit实现
      */
-    private ProxyDelegate delegate;
+    private volatile ProxyDelegate delegate;
 
     public ConnectorProxy(@NonNull Configuration configuration, @NonNull Class<T> connector) {
         this.configuration = configuration;
@@ -41,11 +41,12 @@ public class ConnectorProxy<T> implements InvocationHandler, Serializable {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         try {
-            // set context
-            //setContext();
-
             if (Objects.isNull(delegate)) {
-                delegate = DelegateFactory.forRetrofit(configuration, connector);
+                synchronized (ConnectorProxy.class){
+                    if(Objects.isNull(delegate)){
+                        delegate = DelegateFactory.forRetrofit(configuration, connector);
+                    }
+                }
             }
             return delegate.execute(method, args);
         }  catch (Throwable e) {
