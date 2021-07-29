@@ -64,13 +64,27 @@ public class RetrofitDelegate implements ProxyDelegate {
     public RetrofitDelegate(@NonNull Configuration configuration, @NonNull Class<?> connector) {
         this.configuration = configuration;
         this.connector = connector;
+        Class savedDerivedConnector = retrofitConnectors.get(connector);
+        if(savedDerivedConnector==null){
+            synchronized (connector){
+                savedDerivedConnector = retrofitConnectors.get(connector);
+                if(savedDerivedConnector==null){
+                    savedDerivedConnector = deriveFrom(connector);
+                    retrofitConnectors.put(connector,savedDerivedConnector);
+                }
+            }
+        }
+        derivedConnector = savedDerivedConnector;
+        Retrofit retrofit = getGlobalRetrofit();
+        service = retrofit.create(derivedConnector);
+        service = retrofit.create(derivedConnector);
+        service = retrofit.create(derivedConnector);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked", "ConstantConditions"})
     @SneakyThrows
     @Override
     public Object execute(Method method, Object[] args) {
-        createRetrofitServiceIfNeed();
         String methodName = method.getName();
         Class<?>[] parameterTypes = method.getParameterTypes();
         Method delegatedMethod = service.getClass().getDeclaredMethod(methodName, parameterTypes);
@@ -242,18 +256,6 @@ public class RetrofitDelegate implements ProxyDelegate {
         return destGenericSignature;
     }
 
-    private void createRetrofitServiceIfNeed() {
-        if(!retrofitConnectors.containsKey(connector)){
-            synchronized (connector){
-                if(!retrofitConnectors.containsKey(connector)){
-                    derivedConnector = deriveFrom(connector);
-                    Retrofit retrofit = getGlobalRetrofit();
-                    service = retrofit.create(derivedConnector);
-                    retrofitConnectors.put(connector,connector);
-                }
-            }
-        }
-    }
 
     private Retrofit getGlobalRetrofit() {
         // TODO get client from target dataSource
