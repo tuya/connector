@@ -6,7 +6,7 @@
     <parent>
         <artifactId>connector</artifactId>
         <groupId>com.tuya</groupId>
-        <version>1.0.8</version>
+        <version>1.0.9</version>
     </parent>
 
     <artifactId>connector-spring</artifactId>

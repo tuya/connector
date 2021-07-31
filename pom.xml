@@ -6,7 +6,7 @@
     <groupId>com.tuya</groupId>
     <artifactId>connector</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.8</version>
+    <version>1.0.9</version>
 
     <modules>
         <module>connector-api</module>
@@ -22,12 +22,12 @@
         <slf4j-api.version>1.7.25</slf4j-api.version>
         <logback.version>1.2.3</logback.version>
         <junit-jupiter.version>5.7.0</junit-jupiter.version>
-        <retrofit.version>2.7.2</retrofit.version>
+        <retrofit.version>2.9.0</retrofit.version>
         <logging-interceptor.version>3.14.9</logging-interceptor.version>
         <fastjson.version>1.2.73</fastjson.version>
         <converter-gson.version>2.9.0</converter-gson.version>
         <commons-lang3.version>3.9</commons-lang3.version>
-        <javassist.version>3.23.1-GA</javassist.version>
+        <javassist.version>3.25.0-GA</javassist.version>
         <pulsar-client.version>2.5.0</pulsar-client.version>
         <spring-boot.version>2.1.1.RELEASE</spring-boot.version>
     </properties>
@@ -77,7 +77,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
 
     <build>
         <plugins>
