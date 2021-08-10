@@ -37,9 +37,11 @@ public class ApiDataSource {
     String baseUrl;
     String ak;
     String sk;
+    String lang;
 
     static ThreadLocal<String> currentAk = new InheritableThreadLocal<>();
     static ThreadLocal<String> currentSk = new InheritableThreadLocal<>();
+    static ThreadLocal<String> currentLang = new InheritableThreadLocal<>();
 
     public String getAk() {
         if (Objects.nonNull(currentAk) && currentAk.get() != null) {
@@ -55,9 +57,23 @@ public class ApiDataSource {
         return sk;
     }
 
+    public String getLang() {
+        if (Objects.nonNull(currentLang) && currentLang.get() != null) {
+            return currentLang.get();
+        }
+        return lang;
+    }
+
+
     public void clear() {
         currentAk.remove();
         currentSk.remove();
+        currentLang.remove();
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
+        currentLang.set(lang);
     }
 
     public void setAk(String ak) {
