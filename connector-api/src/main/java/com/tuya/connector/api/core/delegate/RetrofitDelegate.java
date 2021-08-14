@@ -77,8 +77,7 @@ public class RetrofitDelegate implements ProxyDelegate {
         derivedConnector = savedDerivedConnector;
         Retrofit retrofit = getGlobalRetrofit();
         service = retrofit.create(derivedConnector);
-        service = retrofit.create(derivedConnector);
-        service = retrofit.create(derivedConnector);
+
     }
 
     @SuppressWarnings({"rawtypes", "unchecked", "ConstantConditions"})
