@@ -31,6 +31,8 @@ public class ApiProperties {
 
     String sk;
 
+    String application;
+
     @NestedConfigurationProperty
     Timeout timeout;
 

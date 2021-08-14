@@ -87,6 +87,9 @@ public class ConnectorAutoConfiguration implements InitializingBean, Application
         if (Objects.nonNull(apiProperties.getPool())) {
             apiDataSource.setConnectionPool(apiProperties.getPool());
         }
+        if (Objects.nonNull(apiProperties.getApplication())) {
+            apiDataSource.setApplication(apiProperties.getApplication());
+        }
         apiDataSource.setLoggingLevel(loggingLevel());
         apiDataSource.setLoggingStrategy(loggingStrategy());
         apiDataSource.setAutoSetHeader(apiProperties.isAutoSetHeader());
