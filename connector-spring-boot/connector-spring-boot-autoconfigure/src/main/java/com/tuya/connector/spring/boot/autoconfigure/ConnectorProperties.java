@@ -28,7 +28,7 @@ public class ConnectorProperties implements InitializingBean {
 
     private String sk;
 
-    private String application;
+    private String entry;
 
     /**
      * Export local http service from connector
@@ -45,10 +45,10 @@ public class ConnectorProperties implements InitializingBean {
             api.setSk(sk);
         }
 
-        if (StringUtils.isEmpty(api.getApplication()) && !StringUtils.isEmpty(application)) {
-            api.setApplication(application);
+        if (StringUtils.isEmpty(api.getEntry()) && !StringUtils.isEmpty(entry)) {
+            api.setEntry(entry);
         }else{
-            api.setApplication("Source");
+            api.setEntry("OpenSource");
         }
     }
 }

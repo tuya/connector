@@ -54,7 +54,7 @@ public class DefaultHeaderInterceptor implements Interceptor {
 
         headerMap.put("Dev_channel", "SaaSFramework");
         headerMap.put("Dev_lang", "Java");
-        headerMap.put("Dev_application", ctx.getApiDataSource().getApplication());
+        headerMap.put("Dev_entry", ctx.getApiDataSource().getEntry());
         Request.Builder requestBuilder = chain.request().newBuilder();
         //okhttp cannot add null value header
         nullToEmptyForMapValue(headerMap);
