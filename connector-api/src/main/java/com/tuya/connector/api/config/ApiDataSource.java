@@ -37,6 +37,7 @@ public class ApiDataSource {
     String baseUrl;
     String ak;
     String sk;
+    String entry;
     String lang;
 
     static ThreadLocal<String> currentAk = new InheritableThreadLocal<>();
@@ -94,6 +95,13 @@ public class ApiDataSource {
         this.baseUrl = baseUrl;
         this.ak = ak;
         this.sk = sk;
+    }
+
+    public ApiDataSource(String baseUrl, String ak, String sk,String entry) {
+        this.baseUrl = baseUrl;
+        this.ak = ak;
+        this.sk = sk;
+        this.entry = entry;
     }
 
     Timeout timeout;

@@ -28,6 +28,8 @@ public class ConnectorProperties implements InitializingBean {
 
     private String sk;
 
+    private String entry;
+
     /**
      * Export local http service from connector
      */
@@ -41,6 +43,12 @@ public class ConnectorProperties implements InitializingBean {
 
         if (StringUtils.isEmpty(api.getSk()) && !StringUtils.isEmpty(sk)) {
             api.setSk(sk);
+        }
+
+        if (StringUtils.isEmpty(api.getEntry()) && !StringUtils.isEmpty(entry)) {
+            api.setEntry(entry);
+        }else{
+            api.setEntry("OpenSource");
         }
     }
 }
