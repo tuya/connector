@@ -10,6 +10,7 @@ import javassist.CtMethod;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.AttributeInfo;
 import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.BooleanMemberValue;
 import javassist.bytecode.annotation.MemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 import lombok.Builder;
@@ -39,6 +40,14 @@ public class BaseHttpAnnotationHandler extends BaseAnnotationHandler<Annotation>
         javassist.bytecode.annotation.Annotation ctAnnotation = new javassist.bytecode.annotation.Annotation(mappedTypeName(annotation), constPool);
         MemberValue getValue = new StringMemberValue(httpValue.value, constPool);
         ctAnnotation.addMemberValue("value", getValue);
+        if (annotation instanceof DELETE) {
+            MemberValue getMethod = new StringMemberValue("DELETE", constPool);
+            MemberValue getPath = new StringMemberValue(httpValue.value, constPool);
+            MemberValue getHasBody = new BooleanMemberValue(true, constPool);
+            ctAnnotation.addMemberValue("method", getMethod);
+            ctAnnotation.addMemberValue("path", getPath);
+            ctAnnotation.addMemberValue("hasBody", getHasBody);
+        }
         methodAttribute.addAnnotation(ctAnnotation);
         ctMethod.getMethodInfo().addAttribute(methodAttribute);
         return true;
