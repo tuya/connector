@@ -48,7 +48,7 @@ public class ConnectorFactoryBean implements FactoryBean<ConnectorFactory>, Init
     @Override
     public void afterPropertiesSet() throws Exception {
         if (Objects.isNull(configuration)) {
-            log.warn("No connector configuration found, the default configuration will take effect: {}", configuration);
+            log.warn("No connector configuration found, the default configuration will take effect");
         }
         if (Objects.isNull(configuration.getApiDataSource())) {
             throw new ConnectorException("Connector api datasource must be required!");

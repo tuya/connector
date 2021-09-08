@@ -61,7 +61,6 @@ public class ConnectorAutoConfiguration implements InitializingBean, Application
         Configuration configuration = new Configuration();
         ApiDataSource apiDataSource = ApiDataSource.DEFAULT_BUILDER.build();
         configuration.setApiDataSource(dataSource(apiDataSource, configuration));
-        log.info("Connector configuration : {}", configuration);
         return configuration;
     }
 
