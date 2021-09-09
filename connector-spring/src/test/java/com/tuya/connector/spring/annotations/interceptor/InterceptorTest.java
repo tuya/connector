@@ -34,7 +34,7 @@ public class InterceptorTest {
 
     @Test
     void interceptorTest() {
-        Boolean result = ability.get();
+        Boolean result = ability.deleteNoBody(1);
         Assertions.assertEquals(result, true);
     }
 
