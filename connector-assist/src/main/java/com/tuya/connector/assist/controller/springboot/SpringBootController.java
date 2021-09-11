@@ -5,6 +5,8 @@ import com.tuya.connector.assist.model.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+
 /**
  * <p> TODO
  *
@@ -47,9 +49,16 @@ public class SpringBootController {
         return Result.builder().result(JSON.toJSONString(body)).build();
     }
 
+    @DeleteMapping("/deleteWithBody")
+    public Result<Object> deleteTest(@RequestBody HashMap map) {
+        log.info(JSON.toJSONString(map));
+        return Result.builder().result(true).build();
+    }
 
-
-
-
+    @DeleteMapping("/deleteNoBody")
+    public Result<Object> deleteTestNoBody(Integer num) {
+        log.info(num.toString() + "!!!!!!!!!!!!!!");
+        return Result.builder().result(true).build();
+    }
 
 }

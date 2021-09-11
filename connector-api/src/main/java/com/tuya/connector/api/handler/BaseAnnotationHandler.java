@@ -17,8 +17,9 @@ public abstract class BaseAnnotationHandler<Anno extends Annotation> {
 
     /**
      * handle different connector annotation
-     * @param anno connector annotation
-     * @param ctClass proxy service class
+     *
+     * @param anno     connector annotation
+     * @param ctClass  proxy service class
      * @param ctMethod proxy service method
      * @return return true or another annotation
      */
@@ -28,7 +29,7 @@ public abstract class BaseAnnotationHandler<Anno extends Annotation> {
         if (annotation instanceof Body) {
             return retrofit2.http.Body.class.getTypeName();
         } else if (annotation instanceof DELETE) {
-            return retrofit2.http.DELETE.class.getTypeName();
+            return retrofit2.http.HTTP.class.getTypeName();
         } else if (annotation instanceof GET) {
             return retrofit2.http.GET.class.getTypeName();
         } else if (annotation instanceof Header) {
@@ -41,11 +42,11 @@ public abstract class BaseAnnotationHandler<Anno extends Annotation> {
             return retrofit2.http.Path.class.getTypeName();
         } else if (annotation instanceof POST) {
             return retrofit2.http.POST.class.getTypeName();
-        }  else if (annotation instanceof PUT) {
+        } else if (annotation instanceof PUT) {
             return retrofit2.http.PUT.class.getTypeName();
         } else if (annotation instanceof Query) {
             return retrofit2.http.Query.class.getTypeName();
-        }  else if (annotation instanceof QueryMap) {
+        } else if (annotation instanceof QueryMap) {
             return retrofit2.http.QueryMap.class.getTypeName();
         } else if (annotation instanceof Url) {
             return retrofit2.http.Url.class.getTypeName();

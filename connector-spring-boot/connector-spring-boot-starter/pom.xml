@@ -6,7 +6,7 @@
     <parent>
         <artifactId>connector-spring-boot</artifactId>
         <groupId>com.tuya</groupId>
-        <version>1.0.13</version>
+        <version>1.0.14</version>
     </parent>
 
     <artifactId>connector-spring-boot-starter</artifactId>
