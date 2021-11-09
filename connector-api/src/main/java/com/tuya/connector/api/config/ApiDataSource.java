@@ -1,5 +1,6 @@
 package com.tuya.connector.api.config;
 
+import com.alibaba.ttl.TransmittableThreadLocal;
 import com.tuya.connector.api.context.ContextManager;
 import com.tuya.connector.api.error.ErrorProcessorRegister;
 import com.tuya.connector.api.header.HeaderProcessor;
@@ -40,9 +41,9 @@ public class ApiDataSource {
     String entry;
     String lang;
 
-    static ThreadLocal<String> currentAk = new InheritableThreadLocal<>();
-    static ThreadLocal<String> currentSk = new InheritableThreadLocal<>();
-    static ThreadLocal<String> currentLang = new InheritableThreadLocal<>();
+    static TransmittableThreadLocal<String> currentAk = new TransmittableThreadLocal<>();
+    static TransmittableThreadLocal<String> currentSk = new TransmittableThreadLocal<>();
+    static TransmittableThreadLocal<String> currentLang = new TransmittableThreadLocal<>();
 
     public String getAk() {
         if (Objects.nonNull(currentAk) && currentAk.get() != null) {
