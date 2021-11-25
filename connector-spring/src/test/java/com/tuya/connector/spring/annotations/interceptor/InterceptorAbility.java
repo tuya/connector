@@ -1,6 +1,6 @@
 package com.tuya.connector.spring.annotations.interceptor;
 
-import java.util.HashMap;
+import com.tuya.connector.api.model.Result;
 
 /**
  * <p> TODO
@@ -13,5 +13,7 @@ public interface InterceptorAbility {
 
     Boolean deleteNoBody(Integer num);
 
-    Boolean deleteWithBody(HashMap map);
+    Object deleteWithBody(Result result);
+
+    Object getWithBody();
 }

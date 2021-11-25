@@ -1,6 +1,7 @@
 package com.tuya.connector.api.core.delegate;
 
 import com.tuya.connector.api.config.*;
+import com.tuya.connector.api.core.convert.FastJsonConverterFactory;
 import com.tuya.connector.api.error.ErrorContext;
 import com.tuya.connector.api.error.ErrorInfo;
 import com.tuya.connector.api.exceptions.ConnectorDelegateException;
@@ -23,7 +24,6 @@ import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -283,12 +283,18 @@ public class RetrofitDelegate implements ProxyDelegate {
                         okHttpBuilder.addInterceptor(new DefaultHeaderInterceptor(headerProcessor, apiDataSource.getContextManager()));
                     }
 
+//                    GsonBuilder gsonBuilder = new GsonBuilder();
+//                    Gson gson = gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+//                            .registerTypeAdapter(new TypeToken<Map<String, Object>>() {
+//                            }.getType(), new MapTypeAdapter()).create();
+//                    System.out.println(gson.getAdapter(new TypeToken<Map<String, Object>>() {
+//                    }));
                     retrofitClient = new Retrofit.Builder()
-                        .baseUrl(apiDataSource.getBaseUrl())
-                        .validateEagerly(validateEagerly)
-                        .client(okHttpBuilder.build())
-                        .addConverterFactory(JacksonConverterFactory.create())
-                        .build();
+                            .baseUrl(apiDataSource.getBaseUrl())
+                            .validateEagerly(validateEagerly)
+                            .client(okHttpBuilder.build())
+                            .addConverterFactory(FastJsonConverterFactory.create())
+                            .build();
                 }
             }
         }
