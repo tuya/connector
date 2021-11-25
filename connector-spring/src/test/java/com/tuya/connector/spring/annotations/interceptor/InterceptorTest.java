@@ -2,13 +2,15 @@ package com.tuya.connector.spring.annotations.interceptor;
 
 import com.tuya.connector.api.config.ApiDataSource;
 import com.tuya.connector.api.config.Configuration;
+import com.tuya.connector.api.model.Result;
 import com.tuya.connector.spring.annotations.ConnectorScan;
 import com.tuya.connector.spring.core.ConnectorFactoryBean;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
+
+import java.util.HashMap;
 
 /**
  * <p> TODO
@@ -34,8 +36,17 @@ public class InterceptorTest {
 
     @Test
     void interceptorTest() {
-        Boolean result = ability.deleteNoBody(1);
-        Assertions.assertEquals(result, true);
+        HashMap map = new HashMap();
+        map.put("msg", "12314125");
+//        Object result = ability.getWithBody();
+//        System.out.println(result);
+//        HashMap map1 = new HashMap();
+//        map1.put("1", "1");
+        Result result1 = new Result();
+        result1.setCode(11111);
+        Object result2 = ability.deleteWithBody(result1);
+        System.out.println(result2);
+//        Assertions.assertEquals(result, true);
     }
 
     @org.springframework.context.annotation.Configuration

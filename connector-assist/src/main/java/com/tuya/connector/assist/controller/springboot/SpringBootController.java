@@ -2,9 +2,13 @@ package com.tuya.connector.assist.controller.springboot;
 
 import com.alibaba.fastjson.JSON;
 import com.tuya.connector.assist.model.Result;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
@@ -50,15 +54,34 @@ public class SpringBootController {
     }
 
     @DeleteMapping("/deleteWithBody")
-    public Result<Object> deleteTest(@RequestBody HashMap map) {
+    public Result<HashMap> deleteTest(@RequestBody HashMap map) {
         log.info(JSON.toJSONString(map));
-        return Result.builder().result(true).build();
+        return Result.<HashMap>builder().success(true).t(System.currentTimeMillis()).result(map).build();
     }
 
     @DeleteMapping("/deleteNoBody")
     public Result<Object> deleteTestNoBody(Integer num) {
         log.info(num.toString() + "!!!!!!!!!!!!!!");
-        return Result.builder().result(true).build();
+        return Result.builder().code(200).msg("ok").t(100L).result(num).build();
     }
+
+    @GetMapping("/getWithBody")
+    public Result<Object> getWithBodyTest() {
+        DeviceStatus ggggg = new DeviceStatus("1111", 1);
+        log.info(ggggg.toString());
+        return Result.builder().result(1).build();
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public class DeviceStatus implements Serializable {
+
+        private static final long serialVersionUID = -3591144314043292495L;
+        private String code;
+
+        private Object value;
+    }
+
 
 }

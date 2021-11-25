@@ -4,8 +4,7 @@ import com.tuya.connector.api.annotations.Body;
 import com.tuya.connector.api.annotations.DELETE;
 import com.tuya.connector.api.annotations.GET;
 import com.tuya.connector.api.annotations.Query;
-
-import java.util.HashMap;
+import com.tuya.connector.api.model.Result;
 
 /**
  * <p> TODO
@@ -21,5 +20,8 @@ public interface InterceptorConnector extends InterceptorAbility {
     Boolean deleteNoBody(@Query("num") Integer num);
 
     @DELETE("/test/springboot/deleteWithBody")
-    Boolean deleteWithBody(@Body HashMap map);
+    Object deleteWithBody(@Body Result result);
+
+    @GET("/test/springboot/getWithBody")
+    Object getWithBody();
 }
