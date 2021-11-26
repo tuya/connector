@@ -23,7 +23,6 @@ import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -287,7 +286,7 @@ public class RetrofitDelegate implements ProxyDelegate {
                         .baseUrl(apiDataSource.getBaseUrl())
                         .validateEagerly(validateEagerly)
                         .client(okHttpBuilder.build())
-                        .addConverterFactory(JacksonConverterFactory.create())
+                        .addConverterFactory(FastJsonConverterFactory.create())
                         .build();
                 }
             }
