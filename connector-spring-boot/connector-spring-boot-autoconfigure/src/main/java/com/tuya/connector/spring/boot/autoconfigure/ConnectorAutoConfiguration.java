@@ -55,7 +55,7 @@ public class ConnectorAutoConfiguration implements InitializingBean, Application
         return factory;
     }
 
-    @Bean
+    @Bean("tuyaConfiguration")
     @ConditionalOnMissingBean
     public Configuration configuration() {
         Configuration configuration = new Configuration();
