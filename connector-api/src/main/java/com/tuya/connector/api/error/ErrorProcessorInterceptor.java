@@ -3,8 +3,10 @@ package com.tuya.connector.api.error;
 import com.tuya.connector.api.config.Configuration;
 import com.tuya.connector.api.plugin.ConnectorInterceptor;
 import com.tuya.connector.api.plugin.Invocation;
+import com.tuya.connector.api.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Method;
 import java.util.Objects;
 
 /**
@@ -29,8 +31,9 @@ public class ErrorProcessorInterceptor implements ConnectorInterceptor {
             result = invocation.proceed();
         } catch (Throwable t) {
             ErrorInfo errorInfo = ErrorContext.get();
+            Method method = invocation.getMethod();
+            Object[] args = invocation.getArgs();
             if (Objects.nonNull(errorInfo)) {
-
                 ErrorProcessorRegister errorProcessorRegister = configuration.getApiDataSource().getErrorProcessorRegister();
                 ErrorProcessor errorProcessor = errorProcessorRegister.get(errorInfo.getErrorCode());
                 if (Objects.nonNull(errorProcessor)) {
@@ -38,9 +41,11 @@ public class ErrorProcessorInterceptor implements ConnectorInterceptor {
                     return errorProcessor.process(errorInfo, invocation, configuration.getApiDataSource().getContextManager().get());
                 } else {
                     log.info("No error processor found for errorCode:{}", errorInfo.getErrorCode());
+                    log.error("Error invoke connector[{}]", Utils.classMethodSignature(method, args));
                     throw t;
                 }
             }
+            log.error("Error invoke connector[{}]", Utils.classMethodSignature(method, args));
             throw t;
         } finally {
             ErrorContext.remove();
