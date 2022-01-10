@@ -30,6 +30,6 @@ public class ExceptionFactory {
     }
 
     public static ConnectorResultException ofCode(int code, String msg, Long t) {
-        return new ConnectorResultException("error code : " + code + ", error msg : " + msg + ", t :" + t, new ErrorInfo(code + "", msg));
+        return new ConnectorResultException("error code : " + code + ", error msg : " + msg + " t : " + t, new ErrorInfo(code + "", msg));
     }
 }
