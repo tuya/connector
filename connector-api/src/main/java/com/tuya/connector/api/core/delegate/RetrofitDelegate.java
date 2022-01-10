@@ -56,19 +56,21 @@ public class RetrofitDelegate implements ProxyDelegate {
 
     private static volatile Retrofit retrofitClient;
 
-    /**store connector classes which has created retrofit service class*/
-    private static Map<Class,Class> retrofitConnectors = new ConcurrentHashMap<>();
+    /**
+     * store connector classes which has created retrofit service class
+     */
+    private static Map<Class, Class> retrofitConnectors = new ConcurrentHashMap<>();
 
     public RetrofitDelegate(@NonNull Configuration configuration, @NonNull Class<?> connector) {
         this.configuration = configuration;
         this.connector = connector;
         Class savedDerivedConnector = retrofitConnectors.get(connector);
-        if(savedDerivedConnector==null){
-            synchronized (connector){
+        if (savedDerivedConnector == null) {
+            synchronized (connector) {
                 savedDerivedConnector = retrofitConnectors.get(connector);
-                if(savedDerivedConnector==null){
+                if (savedDerivedConnector == null) {
                     savedDerivedConnector = deriveFrom(connector);
-                    retrofitConnectors.put(connector,savedDerivedConnector);
+                    retrofitConnectors.put(connector, savedDerivedConnector);
                 }
             }
         }
@@ -110,7 +112,7 @@ public class RetrofitDelegate implements ProxyDelegate {
             if (Objects.nonNull(retCode)) {
                 log.warn("Result(code={},msg={},t={}) is not successful for requeset: {}", retCode, retMsg, body.getT(), Utils.classMethodSignature(method, args));
                 ErrorContext.set(new ErrorInfo(retCode + "", retMsg));
-                throw ExceptionFactory.ofCode(retCode, retMsg);
+                throw ExceptionFactory.ofCode(retCode, retMsg, body.getT());
             }
             Class<?> srcReturnType = method.getReturnType();
             if (srcReturnType == Result.class) {
@@ -126,6 +128,7 @@ public class RetrofitDelegate implements ProxyDelegate {
     /**
      * 根据Connector接口派生出的Connector接口，用于Retrofit创建代理service时的接口
      * 约定增加前缀: $
+     *
      * @param connectorInterface
      * @return
      */
@@ -158,7 +161,7 @@ public class RetrofitDelegate implements ProxyDelegate {
 
         CtMethod[] methods = connector.getDeclaredMethods();
         log.debug("Methods declared by connector({}) : {}", connectorName,
-            Arrays.stream(methods).map(CtMethod::getName).collect(Collectors.joining(",")));
+                Arrays.stream(methods).map(CtMethod::getName).collect(Collectors.joining(",")));
 
         for (CtMethod connectorMethod : methods) {
             CtMethod serviceMethod = CtNewMethod.abstractMethod(call, connectorMethod.getName(), connectorMethod.getParameterTypes(),
@@ -182,7 +185,7 @@ public class RetrofitDelegate implements ProxyDelegate {
                 for (int i = 0; i < paramAnnotationsLength; i++) {
                     for (int j = 0; j < parameterAnnotationsArray[i].length; j++) {
                         paramAnnotations[i][j] = (Annotation) ApiAnnotationHandlerDispatcher.dispatchAndHandle(
-                            (java.lang.annotation.Annotation) parameterAnnotationsArray[i][j], service, serviceMethod
+                                (java.lang.annotation.Annotation) parameterAnnotationsArray[i][j], service, serviceMethod
                         );
                     }
                 }
@@ -201,16 +204,17 @@ public class RetrofitDelegate implements ProxyDelegate {
      * T: (Ljava/lang/String;Ljava/util/Map<Ljava/lang/String;Ljava/lang/Object;>;)Lmodel/Device;
      * Result: (Ljava/lang/String;Ljava/util/Map<Ljava/lang/String;Ljava/lang/Object;>;)Lmodel/Result;
      * Result<T>: (Ljava/lang/String;Ljava/util/Map<Ljava/lang/String;Ljava/lang/Object;>;)Lmodel/Result<Lmodel/Device;>;
-     *
+     * <p>
      * Call: (Ljava/lang/String;Ljava/util/Map<Ljava/lang/String;Ljava/lang/Object;>;)Lretrofit2/Call;
      * Call<Result>: (Ljava/lang/String;Ljava/util/Map<Ljava/lang/String;Ljava/lang/Object;>;)Lretrofit2/Call<Lmodel/Result;>;
      * Call<Result<T>>>: (Ljava/lang/String;Ljava/util/Map<Ljava/lang/String;Ljava/lang/Object;>;)Lretrofit2/Call<Lmodel/Result<Lmodel/Device;>;>;
-     *
+     * <p>
      * void: (Ljava/lang/String;Ljava/util/Map<Ljava/lang/String;Ljava/lang/Object;>;)V
      * Void: (Ljava/lang/String;Ljava/util/Map<Ljava/lang/String;Ljava/lang/Object;>;)Ljava/lang/Void;
      * int: (Ljava/lang/String;Ljava/util/Map<Ljava/lang/String;Ljava/lang/Object;>;)I
-     *
+     * <p>
      * TODO 算法解析、直接返回Call的方法
+     *
      * @param srcCtMethod
      * @return
      */
@@ -229,8 +233,8 @@ public class RetrofitDelegate implements ProxyDelegate {
         } else {
             if (returnSig.startsWith(CALL_SIG_PREFIX)) {
                 throw new ConnectorDelegateException(
-                    String.format("Connector method's return type currently not support retrofit2.Call directly for %s",
-                    Utils.classMethodSignature(srcCtMethod))
+                        String.format("Connector method's return type currently not support retrofit2.Call directly for %s",
+                                Utils.classMethodSignature(srcCtMethod))
                 );
                 // if (returnSig.equals(CALL_SIG_PREFIX + ";")) {
                 //     // return Call
@@ -270,25 +274,25 @@ public class RetrofitDelegate implements ProxyDelegate {
                     boolean validateEagerly = configuration.isValidateEagerly();
 
                     OkHttpClient.Builder okHttpBuilder = new OkHttpClient.Builder()
-                        .connectionPool(new okhttp3.ConnectionPool(connectionPool.getMaxIdleConnections(),
-                            connectionPool.getKeepAliveSecond(), TimeUnit.SECONDS))
-                        .callTimeout(timeout.getCallTimeout(), TimeUnit.SECONDS)
-                        .connectTimeout(timeout.getConnectTimeout(), TimeUnit.SECONDS)
-                        .readTimeout(timeout.getReadTimeout(), TimeUnit.SECONDS)
-                        .writeTimeout(timeout.getWriteTimeout(), TimeUnit.SECONDS)
-                        .retryOnConnectionFailure(retryOnConnectionFailure)
-                        .addInterceptor(HttpLoggingFactory.createHttpLoggingInterceptor(loggingLevel, loggingStrategy));
+                            .connectionPool(new okhttp3.ConnectionPool(connectionPool.getMaxIdleConnections(),
+                                    connectionPool.getKeepAliveSecond(), TimeUnit.SECONDS))
+                            .callTimeout(timeout.getCallTimeout(), TimeUnit.SECONDS)
+                            .connectTimeout(timeout.getConnectTimeout(), TimeUnit.SECONDS)
+                            .readTimeout(timeout.getReadTimeout(), TimeUnit.SECONDS)
+                            .writeTimeout(timeout.getWriteTimeout(), TimeUnit.SECONDS)
+                            .retryOnConnectionFailure(retryOnConnectionFailure)
+                            .addInterceptor(HttpLoggingFactory.createHttpLoggingInterceptor(loggingLevel, loggingStrategy));
                     if (autoSetHeader) {
                         Objects.requireNonNull(headerProcessor, "HeaderProcessor must not be null when autoSetHeader is enabled");
                         okHttpBuilder.addInterceptor(new DefaultHeaderInterceptor(headerProcessor, apiDataSource.getContextManager()));
                     }
 
                     retrofitClient = new Retrofit.Builder()
-                        .baseUrl(apiDataSource.getBaseUrl())
-                        .validateEagerly(validateEagerly)
-                        .client(okHttpBuilder.build())
-                        .addConverterFactory(FastJsonConverterFactory.create())
-                        .build();
+                            .baseUrl(apiDataSource.getBaseUrl())
+                            .validateEagerly(validateEagerly)
+                            .client(okHttpBuilder.build())
+                            .addConverterFactory(FastJsonConverterFactory.create())
+                            .build();
                 }
             }
         }

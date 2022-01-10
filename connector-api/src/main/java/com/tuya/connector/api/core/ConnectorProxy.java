@@ -5,7 +5,6 @@ import com.tuya.connector.api.core.delegate.DelegateFactory;
 import com.tuya.connector.api.core.delegate.ProxyDelegate;
 import com.tuya.connector.api.exceptions.ConnectorException;
 import com.tuya.connector.api.exceptions.ExceptionFactory;
-import com.tuya.connector.api.utils.Utils;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,7 +49,6 @@ public class ConnectorProxy<T> implements InvocationHandler, Serializable {
             }
             return delegate.execute(method, args);
         }  catch (Throwable e) {
-            log.error("Error invoke connector[{}]", Utils.classMethodSignature(method, args));
             if (e instanceof ConnectorException) {
                 throw e;
             }

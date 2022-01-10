@@ -28,4 +28,8 @@ public class ExceptionFactory {
     public static ConnectorResultException ofCode(int code, String msg) {
         return new ConnectorResultException("error code : " + code + ", error msg : " + msg, new ErrorInfo(code + "", msg));
     }
+
+    public static ConnectorResultException ofCode(int code, String msg, Long t) {
+        return new ConnectorResultException("error code : " + code + ", error msg : " + msg + ", t :" + t, new ErrorInfo(code + "", msg));
+    }
 }
