@@ -31,6 +31,7 @@
         <pulsar-client.version>2.5.0</pulsar-client.version>
         <spring-boot.version>2.1.1.RELEASE</spring-boot.version>
         <transmittable-thread-local.version>2.12.2</transmittable-thread-local.version>
+        <converter-jackjson.version>2.9.0</converter-jackjson.version>
     </properties>
 
     <dependencyManagement>
@@ -112,6 +113,12 @@
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
                 <optional>true</optional>
+            </dependency>
+
+            <dependency>
+                <groupId>com.squareup.retrofit2</groupId>
+                <artifactId>converter-jackson</artifactId>
+                <version>${converter-jackjson.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
