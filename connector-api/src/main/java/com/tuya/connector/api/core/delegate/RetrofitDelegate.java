@@ -25,8 +25,12 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -286,6 +290,8 @@ public class RetrofitDelegate implements ProxyDelegate {
                         Objects.requireNonNull(headerProcessor, "HeaderProcessor must not be null when autoSetHeader is enabled");
                         okHttpBuilder.addInterceptor(new DefaultHeaderInterceptor(headerProcessor, apiDataSource.getContextManager()));
                     }
+                    // SSL Check
+                    setSSLCheck(okHttpBuilder, configuration.isCheckSSL());
 
                     retrofitClient = new Retrofit.Builder()
                             .baseUrl(apiDataSource.getBaseUrl())
@@ -298,5 +304,44 @@ public class RetrofitDelegate implements ProxyDelegate {
         }
         return retrofitClient;
     }
+
+    /**
+     * if checkSSL = false, trust all
+     * @param okHttpBuilder
+     * @param checkSSL
+     * @throws Exception
+     */
+    private void setSSLCheck(OkHttpClient.Builder okHttpBuilder, boolean checkSSL) {
+        if (!checkSSL) {
+            // Create a trust manager that does not validate certificate chains
+            final TrustManager[] trustAllCerts = new TrustManager[] {
+                new X509TrustManager() {
+                    @Override
+                    public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws
+                        CertificateException { }
+
+                    @Override
+                    public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException { }
+
+                    @Override
+                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                        return new java.security.cert.X509Certificate[]{};
+                    }
+                }
+            };
+
+            // Install the all-trusting trust manager
+            final SSLContext sslContext;
+            try {
+                sslContext = SSLContext.getInstance("SSL");
+                sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+                okHttpBuilder.sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager)trustAllCerts[0]);
+                okHttpBuilder.hostnameVerifier((hostname, session) -> true);
+            } catch (Exception e) {
+                log.error("trust all ssl error, checkSSL=false invalid", e);
+            }
+        }
+    }
+
 
 }

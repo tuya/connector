@@ -23,6 +23,7 @@ public class Configuration {
 
     private boolean validateEagerly = true;
     private boolean retryOnConnectionFailure = true;
+    private boolean checkSSL = true;
 
     private List<ConnectorInterceptor> interceptors;
 
@@ -54,6 +55,14 @@ public class Configuration {
 
     public void setValidateEagerly(boolean validateEagerly) {
         this.validateEagerly = validateEagerly;
+    }
+
+    public boolean isCheckSSL() {
+        return checkSSL;
+    }
+
+    public void setCheckSSL(boolean checkSSL) {
+        this.checkSSL = checkSSL;
     }
 
     public boolean isRetryOnConnectionFailure() {
