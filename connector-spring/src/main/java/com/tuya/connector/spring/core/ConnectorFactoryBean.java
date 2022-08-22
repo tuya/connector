@@ -9,12 +9,14 @@ import com.tuya.connector.api.exceptions.ConnectorException;
 import com.tuya.connector.api.plugin.ConnectorInterceptor;
 import com.tuya.connector.spring.annotations.Interceptor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Map;
@@ -87,9 +89,17 @@ public class ConnectorFactoryBean implements FactoryBean<ConnectorFactory>, Init
                 (o1, o2) -> {
                     if (o1 instanceof ConnectorInterceptor && o2 instanceof ConnectorInterceptor) {
                         ConnectorInterceptor ci1 = (ConnectorInterceptor) o1;
+                        Class<?> original1 = ci1.getClass();
+                        if (AopUtils.isCglibProxy(ci1)) {
+                            original1 = ClassUtils.getUserClass(original1);
+                        }
                         ConnectorInterceptor ci2 = (ConnectorInterceptor) o2;
-                        Interceptor annotation1 = ci1.getClass().getAnnotation(Interceptor.class);
-                        Interceptor annotation2 = ci2.getClass().getAnnotation(Interceptor.class);
+                        Class<?> original2 = ci2.getClass();
+                        if (AopUtils.isCglibProxy(ci2)) {
+                            original2 = ClassUtils.getUserClass(original2);
+                        }
+                        Interceptor annotation1 = original1.getAnnotation(Interceptor.class);
+                        Interceptor annotation2 = original2.getAnnotation(Interceptor.class);
                         return annotation1.priority() - annotation2.priority();
                     }
                     throw new ConnectorException("Connector interceptor must implements ConnectorInterceptor.class");
