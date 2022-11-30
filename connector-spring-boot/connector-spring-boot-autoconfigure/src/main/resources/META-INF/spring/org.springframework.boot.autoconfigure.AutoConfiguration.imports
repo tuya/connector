@@ -1,0 +1,2 @@
+com.tuya.connector.spring.boot.autoconfigure.ConnectorAutoConfiguration
+com.tuya.connector.spring.boot.autoconfigure.ConnectorExportAutoConfiguration
