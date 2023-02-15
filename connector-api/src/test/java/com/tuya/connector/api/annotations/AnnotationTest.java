@@ -110,16 +110,28 @@ public class AnnotationTest {
         assertEquals("headerValue", headerValue);
     }
 
-
     @Test
-    void bodyTest() {
-        Map<String, String> map = new HashMap<>();
-        map.put("param1", "value1");
-        map.put("param2", "value2");
-        String body = ability.body(map);
-        assertEquals(body, JSON.toJSONString(map));
+    void urlGetTest() {
+        String pathP = "AAA";
+        String queryP = "AAA";
+        String url = "http://localhost:8080/test/annotations/url-get/" + pathP + "?query_p=" + queryP;
+        Map<String, String> ret = ability.urlGet(url);
+        assertEquals(pathP, ret.get("path_p"));
+        assertEquals(queryP, ret.get("query_p"));
+
     }
 
-
+    @Test
+    void urlPostTest() {
+        String v1 = "AAA";
+        String v2 = "AAA";
+        String url = "http://localhost:8080/test/annotations/url-post";
+        Map<String, String> paramMap = new HashMap<>();
+        paramMap.put("k1", v1);
+        paramMap.put("k2", v2);
+        Map<String, String> ret = ability.urlPost(url, paramMap);
+        assertEquals(v1, ret.get("k1"));
+        assertEquals(v2, ret.get("k2"));
+    }
 
 }
