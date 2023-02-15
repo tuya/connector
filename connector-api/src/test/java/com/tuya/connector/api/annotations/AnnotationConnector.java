@@ -60,10 +60,10 @@ public interface AnnotationConnector extends AnnotationAbility{
     String body(@Body Object body);
 
     @Override
-    @GET("/url-get")
-    Map<String, String> urlGet(@Url String url);
+    @GET
+    String urlGet(@Url String url);
 
     @Override
-    @POST("/url-post")
-    Map<String, String> urlPost(@Url String url, Map<String, String> param);
+    @POST
+    String urlPost(@Url String url, @Body Map<String, String> param);
 }

@@ -1,6 +1,7 @@
 package com.tuya.connector.api.annotations;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.tuya.connector.api.config.ApiDataSource;
 import com.tuya.connector.api.config.Configuration;
 import com.tuya.connector.api.config.Logging;
@@ -115,9 +116,10 @@ public class AnnotationTest {
         String pathP = "AAA";
         String queryP = "AAA";
         String url = "http://localhost:8080/test/annotations/url-get/" + pathP + "?query_p=" + queryP;
-        Map<String, String> ret = ability.urlGet(url);
-        assertEquals(pathP, ret.get("path_p"));
-        assertEquals(queryP, ret.get("query_p"));
+        String ret = ability.urlGet(url);
+        JSONObject jsonRet = JSON.parseObject(ret);
+        assertEquals(pathP, jsonRet.getString("path_p"));
+        assertEquals(queryP, jsonRet.getString("query_p"));
 
     }
 
@@ -129,9 +131,10 @@ public class AnnotationTest {
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("k1", v1);
         paramMap.put("k2", v2);
-        Map<String, String> ret = ability.urlPost(url, paramMap);
-        assertEquals(v1, ret.get("k1"));
-        assertEquals(v2, ret.get("k2"));
+        String ret = ability.urlPost(url, paramMap);
+        JSONObject jsonRet = JSON.parseObject(ret);
+        assertEquals(v1, jsonRet.getString("k1"));
+        assertEquals(v2, jsonRet.getString("k2"));
     }
 
 }
