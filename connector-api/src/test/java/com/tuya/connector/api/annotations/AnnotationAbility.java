@@ -34,4 +34,8 @@ public interface AnnotationAbility {
 
     String body(Object body);
 
+    String urlGet(String url);
+
+    String urlPost(String url, Map<String, String> param);
+
 }

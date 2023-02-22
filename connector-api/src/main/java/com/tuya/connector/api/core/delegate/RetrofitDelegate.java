@@ -1,8 +1,7 @@
 package com.tuya.connector.api.core.delegate;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.GsonBuilder;
 import com.tuya.connector.api.config.*;
+import com.tuya.connector.api.core.convert.FastJsonConverterFactory;
 import com.tuya.connector.api.error.ErrorContext;
 import com.tuya.connector.api.error.ErrorInfo;
 import com.tuya.connector.api.exceptions.ConnectorDelegateException;
@@ -25,7 +24,6 @@ import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -289,14 +287,11 @@ public class RetrofitDelegate implements ProxyDelegate {
                         okHttpBuilder.addInterceptor(new DefaultHeaderInterceptor(headerProcessor, apiDataSource.getContextManager()));
                     }
 
-                    GsonBuilder gsonBuilder = new GsonBuilder();
-                    gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
-
                     retrofitClient = new Retrofit.Builder()
                             .baseUrl(apiDataSource.getBaseUrl())
                             .validateEagerly(validateEagerly)
                             .client(okHttpBuilder.build())
-                            .addConverterFactory(GsonConverterFactory.create(gsonBuilder.create()))
+                            .addConverterFactory(FastJsonConverterFactory.create())
                             .build();
                 }
             }

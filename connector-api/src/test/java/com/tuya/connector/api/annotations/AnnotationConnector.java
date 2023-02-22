@@ -59,4 +59,11 @@ public interface AnnotationConnector extends AnnotationAbility{
     @POST("/test/annotations/body")
     String body(@Body Object body);
 
+    @Override
+    @GET
+    String urlGet(@Url String url);
+
+    @Override
+    @POST
+    String urlPost(@Url String url, @Body Map<String, String> param);
 }

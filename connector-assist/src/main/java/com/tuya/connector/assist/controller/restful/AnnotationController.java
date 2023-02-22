@@ -95,4 +95,19 @@ public class AnnotationController {
         return Result.<String>builder().result(JSON.toJSONString(object)).build();
     }
 
+    @GetMapping("/url-get/{path_p}")
+    public Result<String> urlGet(@PathVariable("path_p") String p1, @RequestParam("query_p") String p2) {
+        log.warn("/url-get, param:{}, {}", p1, p2);
+        Map<String, String> ret = new HashMap();
+        ret.put("path_p", p1);
+        ret.put("query_p", p2);
+        return Result.<String>builder().result(JSON.toJSONString(ret)).build();
+    }
+
+    @PostMapping("/url-post")
+    public Result<String> urlPost(@RequestBody Map<String, String> p) {
+        log.warn("/url-post, param:{}", JSON.toJSONString(p));
+        return Result.<String>builder().result(JSON.toJSONString(p)).build();
+    }
+
 }
