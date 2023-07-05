@@ -1,8 +1,6 @@
 package com.tuya.connector.messaging;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 /**
@@ -14,6 +12,8 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MessageDataSource {
     String url;
     String ak;
