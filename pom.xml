@@ -24,7 +24,7 @@
         <junit-jupiter.version>5.7.0</junit-jupiter.version>
         <retrofit.version>2.9.0</retrofit.version>
         <logging-interceptor.version>3.14.9</logging-interceptor.version>
-        <fastjson.version>1.2.73</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <converter-gson.version>2.9.0</converter-gson.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <javassist.version>3.25.0-GA</javassist.version>
