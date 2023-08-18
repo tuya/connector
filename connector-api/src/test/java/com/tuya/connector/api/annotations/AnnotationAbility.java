@@ -1,5 +1,6 @@
 package com.tuya.connector.api.annotations;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,5 +38,7 @@ public interface AnnotationAbility {
     String urlGet(String url);
 
     String urlPost(String url, Map<String, String> param);
+
+    List<ResultObject> urlPost();
 
 }

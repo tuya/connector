@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -108,6 +109,16 @@ public class AnnotationController {
     public Result<String> urlPost(@RequestBody Map<String, String> p) {
         log.warn("/url-post, param:{}", JSON.toJSONString(p));
         return Result.<String>builder().result(JSON.toJSONString(p)).build();
+    }
+
+    @GetMapping("/url-object")
+    public Result<List<Object>> urlObject() {
+        log.warn("/url-object");
+        return Result.<List<Object>>builder().result(
+            List.of(
+                Map.of("abc", 1, "deFg", 2, "mn_pq", 3),
+                Map.of("abc", 4, "deFg", 5, "mn_pq", 6)
+            )).build();
     }
 
 }

@@ -1,5 +1,6 @@
 package com.tuya.connector.api.annotations;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -66,4 +67,8 @@ public interface AnnotationConnector extends AnnotationAbility{
     @Override
     @POST
     String urlPost(@Url String url, @Body Map<String, String> param);
+
+    @Override
+    @GET("/test/annotations/url-object")
+    List<ResultObject> urlPost();
 }

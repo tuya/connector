@@ -13,6 +13,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -135,6 +136,13 @@ public class AnnotationTest {
         JSONObject jsonRet = JSON.parseObject(ret);
         assertEquals(v1, jsonRet.getString("k1"));
         assertEquals(v2, jsonRet.getString("k2"));
+    }
+
+    @Test
+    void urlObjectTest() {
+        List<ResultObject> rets = ability.urlPost();
+        System.out.println(JSON.toJSONString(rets));
+        assertEquals(2, rets.size());
     }
 
 }
