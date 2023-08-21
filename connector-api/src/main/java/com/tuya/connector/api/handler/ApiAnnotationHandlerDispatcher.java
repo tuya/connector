@@ -5,6 +5,9 @@ import com.tuya.connector.api.exceptions.ConnectorAnnotationException;
 import com.tuya.connector.api.utils.Utils;
 import javassist.CtClass;
 import javassist.CtMethod;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.AttributeInfo;
+import javassist.bytecode.ConstPool;
 import lombok.SneakyThrows;
 
 import java.lang.annotation.Annotation;
@@ -45,7 +48,9 @@ public class ApiAnnotationHandlerDispatcher {
     public static Object dispatchAndHandle(Annotation annotation, CtClass ctClass, CtMethod ctMethod) {
         try {
             BaseAnnotationHandler handler = KNOWN_HANDLERS.get(annotation.annotationType());
-            Objects.requireNonNull(handler, String.format("Handler is null for annotation: %s", annotation.getClass().getName()));
+            if (Objects.isNull(handler)) {
+                return otherAnnotations(annotation, ctClass, ctMethod);
+            }
             return handler.handle(annotation, ctClass, ctMethod);
         } catch (Exception e) {
             throw new ConnectorAnnotationException(
@@ -54,5 +59,27 @@ public class ApiAnnotationHandlerDispatcher {
                 e
             );
         }
+    }
+
+    /**
+     * 非 HTTP 相关直接返回原注解
+     * @param annotation
+     * @param ctClass
+     * @param ctMethod
+     * @return
+     */
+    private static Object otherAnnotations(Annotation annotation, CtClass ctClass, CtMethod ctMethod) {
+        ConstPool constPool = ctClass.getClassFile().getConstPool();
+        AnnotationsAttribute methodAttribute;
+        AttributeInfo attribute = ctMethod.getMethodInfo().getAttribute(AnnotationsAttribute.visibleTag);
+        if (Objects.nonNull(attribute)) {
+            methodAttribute = (AnnotationsAttribute) attribute;
+        } else {
+            methodAttribute = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
+        }
+        javassist.bytecode.annotation.Annotation ctAnnotation = new javassist.bytecode.annotation.Annotation(annotation.annotationType().getTypeName(), constPool);
+        methodAttribute.addAnnotation(ctAnnotation);
+        ctMethod.getMethodInfo().addAttribute(methodAttribute);
+        return true;
     }
 }

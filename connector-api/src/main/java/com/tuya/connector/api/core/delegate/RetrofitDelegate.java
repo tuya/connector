@@ -196,7 +196,6 @@ public class RetrofitDelegate implements ProxyDelegate {
 
             service.addMethod(serviceMethod);
         }
-
         return service.toClass(configuration.getClass().getClassLoader(), null);
     }
 

@@ -1,5 +1,7 @@
 package com.tuya.connector.api.annotations;
 
+import lombok.NonNull;
+
 import java.util.List;
 import java.util.Map;
 
@@ -70,5 +72,6 @@ public interface AnnotationConnector extends AnnotationAbility{
 
     @Override
     @GET("/test/annotations/url-object")
+    @NonNull
     List<ResultObject> urlPost();
 }
