@@ -58,6 +58,8 @@ public class RetrofitDelegate implements ProxyDelegate {
 
     private static volatile Retrofit retrofitClient;
 
+    public static OkHttpClient OK_HTTP_CLIENT;
+
     /**
      * store connector classes which has created retrofit service class
      */
@@ -292,10 +294,11 @@ public class RetrofitDelegate implements ProxyDelegate {
                     GsonBuilder gsonBuilder = new GsonBuilder();
                     gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
 
+                    OK_HTTP_CLIENT = okHttpBuilder.build();
                     retrofitClient = new Retrofit.Builder()
                             .baseUrl(apiDataSource.getBaseUrl())
                             .validateEagerly(validateEagerly)
-                            .client(okHttpBuilder.build())
+                            .client(OK_HTTP_CLIENT)
                             .addConverterFactory(GsonConverterFactory.create(gsonBuilder.create()))
                             .build();
                 }

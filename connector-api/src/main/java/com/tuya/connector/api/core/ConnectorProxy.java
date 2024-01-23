@@ -3,6 +3,7 @@ package com.tuya.connector.api.core;
 import com.tuya.connector.api.config.Configuration;
 import com.tuya.connector.api.core.delegate.DelegateFactory;
 import com.tuya.connector.api.core.delegate.ProxyDelegate;
+import com.tuya.connector.api.core.delegate.RetrofitDelegate;
 import com.tuya.connector.api.exceptions.ConnectorException;
 import com.tuya.connector.api.exceptions.ExceptionFactory;
 import lombok.NonNull;
@@ -47,6 +48,7 @@ public class ConnectorProxy<T> implements InvocationHandler, Serializable {
                     }
                 }
             }
+            tmpHttpClientLog();
             return delegate.execute(method, args);
         }  catch (Throwable e) {
             if (e instanceof ConnectorException) {
@@ -57,6 +59,15 @@ public class ConnectorProxy<T> implements InvocationHandler, Serializable {
             //clearContext();
         }
     }
+
+    private void tmpHttpClientLog() {
+        if (RetrofitDelegate.OK_HTTP_CLIENT != null) {
+            log.info("connector call => connection count: {}, idle connections: {}",
+                RetrofitDelegate.OK_HTTP_CLIENT.connectionPool().connectionCount(),
+                RetrofitDelegate.OK_HTTP_CLIENT.connectionPool().idleConnectionCount());
+        }
+    }
+
 
     /*private void setContext() {
         ContextManager contextManager = configuration.getApiDataSource().getContextManager();
