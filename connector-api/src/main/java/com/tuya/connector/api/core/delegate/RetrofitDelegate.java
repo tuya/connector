@@ -1,5 +1,7 @@
 package com.tuya.connector.api.core.delegate;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.GsonBuilder;
 import com.tuya.connector.api.config.*;
 import com.tuya.connector.api.core.convert.FastJsonConverterFactory;
 import com.tuya.connector.api.error.ErrorContext;
@@ -285,6 +287,9 @@ public class RetrofitDelegate implements ProxyDelegate {
                         Objects.requireNonNull(headerProcessor, "HeaderProcessor must not be null when autoSetHeader is enabled");
                         okHttpBuilder.addInterceptor(new DefaultHeaderInterceptor(headerProcessor, apiDataSource.getContextManager()));
                     }
+
+                    GsonBuilder gsonBuilder = new GsonBuilder();
+                    gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
 
                     retrofitClient = new Retrofit.Builder()
                             .baseUrl(apiDataSource.getBaseUrl())
