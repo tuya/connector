@@ -56,13 +56,13 @@ public class ConnectorFactoryBean implements FactoryBean<ConnectorFactory>, Init
             throw new ConnectorException("Connector api datasource must be required!");
         }
 
-        // set interceptors sort by priority
-        setInterceptors();
-
         // register error processor
         registerErrorProcessor();
 
         configuration.init();
+
+        // set interceptors sort by priority
+        setInterceptors();
     }
 
     private void registerErrorProcessor() {
