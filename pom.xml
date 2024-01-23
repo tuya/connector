@@ -6,7 +6,7 @@
     <groupId>com.tuya</groupId>
     <artifactId>connector</artifactId>
     <packaging>pom</packaging>
-    <version>1.1.2-timeout-v2</version>
+    <version>1.1.2-timeout-v3</version>
 
     <modules>
         <module>connector-api</module>
