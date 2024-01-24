@@ -48,9 +48,10 @@ public class ConnectorProxy<T> implements InvocationHandler, Serializable {
                     }
                 }
             }
-            tmpHttpClientLog();
+            tmpHttpClientLog("normal");
             return delegate.execute(method, args);
         }  catch (Throwable e) {
+            tmpHttpClientLog("error");
             if (e instanceof ConnectorException) {
                 throw e;
             }
@@ -60,9 +61,9 @@ public class ConnectorProxy<T> implements InvocationHandler, Serializable {
         }
     }
 
-    private void tmpHttpClientLog() {
+    private void tmpHttpClientLog(String type) {
         if (RetrofitDelegate.OK_HTTP_CLIENT != null) {
-            log.info("connector call => connection count: {}, idle connections: {}",
+            log.info("{} connector call => connection count: {}, idle connections: {}", type,
                 RetrofitDelegate.OK_HTTP_CLIENT.connectionPool().connectionCount(),
                 RetrofitDelegate.OK_HTTP_CLIENT.connectionPool().idleConnectionCount());
         }
