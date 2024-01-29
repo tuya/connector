@@ -21,6 +21,7 @@ import javassist.bytecode.annotation.Annotation;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -293,6 +294,10 @@ public class RetrofitDelegate implements ProxyDelegate {
 
                     GsonBuilder gsonBuilder = new GsonBuilder();
                     gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+
+                    Dispatcher dispatcher = new Dispatcher();
+                    dispatcher.setMaxRequestsPerHost(32);
+                    okHttpBuilder.dispatcher(dispatcher);
 
                     OK_HTTP_CLIENT = okHttpBuilder.build();
                     retrofitClient = new Retrofit.Builder()
