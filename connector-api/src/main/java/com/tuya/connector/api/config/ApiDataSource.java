@@ -7,6 +7,7 @@ import com.tuya.connector.api.header.HeaderProcessor;
 import com.tuya.connector.api.token.TokenManager;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import okhttp3.OkHttpClient;
 
 import java.util.Objects;
 
@@ -124,4 +125,9 @@ public class ApiDataSource {
     ContextManager contextManager;
 
     ErrorProcessorRegister errorProcessorRegister;
+
+    /**
+     * specify a client for this data source, if not null, will use this client and ignore other configurations
+     */
+    OkHttpClient specificClient;
 }

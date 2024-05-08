@@ -263,24 +263,30 @@ public class RetrofitDelegate implements ProxyDelegate {
             synchronized (this) {
                 if (Objects.isNull(retrofitClient)) {
                     ApiDataSource apiDataSource = configuration.getApiDataSource();
-                    ConnectionPool connectionPool = apiDataSource.getConnectionPool();
-                    Timeout timeout = apiDataSource.getTimeout();
-                    boolean retryOnConnectionFailure = configuration.isRetryOnConnectionFailure();
-                    Logging.Level loggingLevel = apiDataSource.getLoggingLevel();
-                    Logging.Strategy loggingStrategy = apiDataSource.getLoggingStrategy();
-                    boolean autoSetHeader = configuration.getApiDataSource().isAutoSetHeader();
-                    HeaderProcessor headerProcessor = apiDataSource.getHeaderProcessor();
-                    boolean validateEagerly = configuration.isValidateEagerly();
-
-                    OkHttpClient.Builder okHttpBuilder = new OkHttpClient.Builder()
-                            .connectionPool(new okhttp3.ConnectionPool(connectionPool.getMaxIdleConnections(),
-                                    connectionPool.getKeepAliveSecond(), TimeUnit.SECONDS))
+                    OkHttpClient.Builder okHttpBuilder;
+                    OkHttpClient specificClient = apiDataSource.getSpecificClient();
+                    if (Objects.nonNull(specificClient)) {
+                        log.info("Use specific specific client: {}", specificClient);
+                        okHttpBuilder = specificClient.newBuilder();
+                    } else {
+                        okHttpBuilder = new OkHttpClient.Builder();
+                        ConnectionPool connectionPool = apiDataSource.getConnectionPool();
+                        Timeout timeout = apiDataSource.getTimeout();
+                        boolean retryOnConnectionFailure = configuration.isRetryOnConnectionFailure();
+                        Logging.Level loggingLevel = apiDataSource.getLoggingLevel();
+                        Logging.Strategy loggingStrategy = apiDataSource.getLoggingStrategy();
+                        okHttpBuilder.connectionPool(new okhttp3.ConnectionPool(connectionPool.getMaxIdleConnections(),
+                                connectionPool.getKeepAliveSecond(), TimeUnit.SECONDS))
                             .callTimeout(timeout.getCallTimeout(), TimeUnit.SECONDS)
                             .connectTimeout(timeout.getConnectTimeout(), TimeUnit.SECONDS)
                             .readTimeout(timeout.getReadTimeout(), TimeUnit.SECONDS)
                             .writeTimeout(timeout.getWriteTimeout(), TimeUnit.SECONDS)
                             .retryOnConnectionFailure(retryOnConnectionFailure)
                             .addInterceptor(HttpLoggingFactory.createHttpLoggingInterceptor(loggingLevel, loggingStrategy));
+                    }
+                    boolean autoSetHeader = configuration.getApiDataSource().isAutoSetHeader();
+                    HeaderProcessor headerProcessor = apiDataSource.getHeaderProcessor();
+                    boolean validateEagerly = configuration.isValidateEagerly();
                     if (autoSetHeader) {
                         Objects.requireNonNull(headerProcessor, "HeaderProcessor must not be null when autoSetHeader is enabled");
                         okHttpBuilder.addInterceptor(new DefaultHeaderInterceptor(headerProcessor, apiDataSource.getContextManager()));
