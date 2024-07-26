@@ -2,8 +2,8 @@ package com.tuya.connector.api.core.delegate;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
+import com.google.gson.ToNumberPolicy;
 import com.tuya.connector.api.config.*;
-import com.tuya.connector.api.core.convert.FastJsonConverterFactory;
 import com.tuya.connector.api.error.ErrorContext;
 import com.tuya.connector.api.error.ErrorInfo;
 import com.tuya.connector.api.exceptions.ConnectorDelegateException;
@@ -297,6 +297,7 @@ public class RetrofitDelegate implements ProxyDelegate {
 
                     GsonBuilder gsonBuilder = new GsonBuilder();
                     gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+                    gsonBuilder.setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE);
 
                     retrofitClient = new Retrofit.Builder()
                             .baseUrl(apiDataSource.getBaseUrl())

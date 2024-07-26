@@ -74,4 +74,8 @@ public interface AnnotationConnector extends AnnotationAbility{
     @GET("/test/annotations/url-object")
     @NonNull
     List<ResultObject> urlPost();
+
+    @Override
+    @GET("/test/annotations/int-double-test")
+    Object int2Double();
 }

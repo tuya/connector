@@ -145,4 +145,10 @@ public class AnnotationTest {
         assertEquals(2, rets.size());
     }
 
+    @Test
+    void int2DoubleTest() {
+        Object ret = ability.int2Double();
+        System.out.println(JSON.toJSONString(ret));
+    }
+
 }

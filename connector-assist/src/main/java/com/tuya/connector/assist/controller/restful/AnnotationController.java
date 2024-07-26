@@ -1,6 +1,7 @@
 package com.tuya.connector.assist.controller.restful;
 
 import com.alibaba.fastjson.JSON;
+import com.tuya.connector.assist.model.IntDoubleVO;
 import com.tuya.connector.assist.model.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -119,6 +120,11 @@ public class AnnotationController {
                 Map.of("abc", 1, "deFg", 2, "mn_pq", 3),
                 Map.of("abc", 4, "deFg", 5, "mn_pq", 6)
             )).build();
+    }
+
+    @GetMapping("/int-double-test")
+    public Result<IntDoubleVO> int2DoubleTest() {
+        return Result.<IntDoubleVO>builder().result(new IntDoubleVO(1, 2, 3L, 4L, 5.5)).build();
     }
 
 }
