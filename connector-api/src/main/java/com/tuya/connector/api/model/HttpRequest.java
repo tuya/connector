@@ -26,16 +26,16 @@ public class HttpRequest {
     byte[] body;
     HttpUrl httpUrl;
 
-    private String orginalPath() {
-        String p = httpUrl.scheme() + "://" + httpUrl.host();
-        if (httpUrl.port() != 80 && httpUrl.port() != 443) {
-            p += ":" + httpUrl.port();
-        }
+    public String originalPath() {
         List<String> pathSegments = httpUrl.pathSegments();
-        for (String pathSegment : pathSegments) {
-            p += "/" + pathSegment;
+        if (pathSegments.isEmpty()) {
+            return "";
         }
-        return p;
+        StringBuilder p = new StringBuilder();
+        for (String pathSegment : pathSegments) {
+            p.append("/").append(pathSegment);
+        }
+        return p.toString();
     }
 
 }
