@@ -13,7 +13,6 @@ import com.tuya.connector.api.token.TokenManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +43,7 @@ public class AutoSetHeaderTest {
                 map.put("autoheader", "enable");
                 return map;
             }
+
             @Override
             public String sign(String content) {
                 return content;
@@ -84,6 +84,16 @@ public class AutoSetHeaderTest {
     void enableTest() {
         String enable = ability.enable();
         assertEquals(enable, "enable");
+    }
+
+
+    @Test
+    void chineseAndPlusTest() {
+        String plus = "a+b";
+        String chineseChar = "你好";
+        Map<String, String> ret = ability.chineseAndPlusTest(plus, chineseChar);
+        assertEquals(plus, ret.get("plus"));
+        assertEquals(chineseChar, ret.get("chinese_char"));
     }
 
 }

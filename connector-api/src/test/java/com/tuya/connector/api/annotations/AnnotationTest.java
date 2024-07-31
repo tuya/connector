@@ -150,5 +150,4 @@ public class AnnotationTest {
         Object ret = ability.int2Double();
         System.out.println(JSON.toJSONString(ret));
     }
-
 }

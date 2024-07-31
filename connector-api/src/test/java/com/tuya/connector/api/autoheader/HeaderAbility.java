@@ -1,5 +1,7 @@
 package com.tuya.connector.api.autoheader;
 
+import java.util.Map;
+
 /**
  * <p> TODO
  *
@@ -9,5 +11,7 @@ package com.tuya.connector.api.autoheader;
 public interface HeaderAbility {
 
     String enable();
+
+    Map<String, String> chineseAndPlusTest(String plus, String chineseChar);
 
 }

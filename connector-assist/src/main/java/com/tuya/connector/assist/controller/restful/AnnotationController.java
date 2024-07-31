@@ -6,6 +6,7 @@ import com.tuya.connector.assist.model.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -125,6 +126,11 @@ public class AnnotationController {
     @GetMapping("/int-double-test")
     public Result<IntDoubleVO> int2DoubleTest() {
         return Result.<IntDoubleVO>builder().result(new IntDoubleVO(1, 2, 3L, 4L, 5.5)).build();
+    }
+
+    @GetMapping("/plus-and-chinese-char/{plus}/{chinese_char}")
+    public Result<Object> chineseAndPlusTest(@PathVariable("plus") String plus, @PathVariable ("chinese_char") String chineseChar, HttpServletRequest request) {
+        return Result.<Object>builder().result(Map.of("plus", plus, "chinese_char", chineseChar)).build();
     }
 
 }

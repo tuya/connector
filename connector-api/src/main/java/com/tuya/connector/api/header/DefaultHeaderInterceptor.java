@@ -4,10 +4,7 @@ import com.tuya.connector.api.context.Context;
 import com.tuya.connector.api.context.ContextManager;
 import com.tuya.connector.api.exceptions.ConnectorException;
 import com.tuya.connector.api.model.HttpRequest;
-import okhttp3.Interceptor;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import okhttp3.*;
 import okio.Buffer;
 import okio.BufferedSink;
 
@@ -44,11 +41,13 @@ public class DefaultHeaderInterceptor implements Interceptor {
         if (body != null) {
             body.writeTo(sink);
         }
+        HttpUrl url = request.url();
         HttpRequest httpRequest = HttpRequest.builder()
                 .httpMethod(request.method())
                 .headers(request.headers().toMultimap())
-                .url(request.url().url())
+                .url(url.url())
                 .body(sink.buffer().readByteArray())
+                .httpUrl(url)
                 .build();
         Map<String, String> headerMap = headerProcessor.value(httpRequest);
 

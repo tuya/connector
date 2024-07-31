@@ -42,5 +42,4 @@ public interface AnnotationAbility {
     List<ResultObject> urlPost();
 
     Object int2Double();
-
 }
