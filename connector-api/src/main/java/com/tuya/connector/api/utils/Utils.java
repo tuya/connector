@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class Utils {
 
-    public static final ClassPool CLASS_POOL = ClassPool.getDefault();
+    public static final ClassPool CLASS_POOL =new ClassPool(true);
 
     private static final Set<String> IMPORTED_PACKAGE = new HashSet<>();
 
