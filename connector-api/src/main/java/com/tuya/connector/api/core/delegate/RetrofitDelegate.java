@@ -294,10 +294,12 @@ public class RetrofitDelegate implements ProxyDelegate {
                         Objects.requireNonNull(headerProcessor, "HeaderProcessor must not be null when autoSetHeader is enabled");
                         okHttpBuilder.addInterceptor(new DefaultHeaderInterceptor(headerProcessor, apiDataSource.getContextManager()));
                     }
-
-                    GsonBuilder gsonBuilder = new GsonBuilder();
-                    gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
-                    gsonBuilder.setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE);
+                    GsonBuilder gsonBuilder = apiDataSource.getGsonBuilder();
+                    if (Objects.isNull(gsonBuilder)) {
+                        gsonBuilder = new GsonBuilder();
+                        gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+                        gsonBuilder.setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE);
+                    }
 
                     retrofitClient = new Retrofit.Builder()
                             .baseUrl(apiDataSource.getBaseUrl())

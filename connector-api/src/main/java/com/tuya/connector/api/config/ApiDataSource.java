@@ -1,6 +1,7 @@
 package com.tuya.connector.api.config;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
+import com.google.gson.GsonBuilder;
 import com.tuya.connector.api.context.ContextManager;
 import com.tuya.connector.api.error.ErrorProcessorRegister;
 import com.tuya.connector.api.header.HeaderProcessor;
@@ -130,4 +131,6 @@ public class ApiDataSource {
      * specify a client for this data source, if not null, will use this client and ignore other configurations
      */
     OkHttpClient specificClient;
+
+    GsonBuilder gsonBuilder;
 }
