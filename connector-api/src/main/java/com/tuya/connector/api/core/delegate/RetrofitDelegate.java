@@ -24,6 +24,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
+import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -279,13 +280,13 @@ public class RetrofitDelegate implements ProxyDelegate {
                         Logging.Level loggingLevel = apiDataSource.getLoggingLevel();
                         Logging.Strategy loggingStrategy = apiDataSource.getLoggingStrategy();
                         okHttpBuilder.connectionPool(new okhttp3.ConnectionPool(connectionPool.getMaxIdleConnections(),
-                                connectionPool.getKeepAliveSecond(), TimeUnit.SECONDS))
-                            .callTimeout(timeout.getCallTimeout(), TimeUnit.SECONDS)
-                            .connectTimeout(timeout.getConnectTimeout(), TimeUnit.SECONDS)
-                            .readTimeout(timeout.getReadTimeout(), TimeUnit.SECONDS)
-                            .writeTimeout(timeout.getWriteTimeout(), TimeUnit.SECONDS)
-                            .retryOnConnectionFailure(retryOnConnectionFailure)
-                            .addInterceptor(HttpLoggingFactory.createHttpLoggingInterceptor(loggingLevel, loggingStrategy));
+                                        connectionPool.getKeepAliveSecond(), TimeUnit.SECONDS))
+                                .callTimeout(timeout.getCallTimeout(), TimeUnit.SECONDS)
+                                .connectTimeout(timeout.getConnectTimeout(), TimeUnit.SECONDS)
+                                .readTimeout(timeout.getReadTimeout(), TimeUnit.SECONDS)
+                                .writeTimeout(timeout.getWriteTimeout(), TimeUnit.SECONDS)
+                                .retryOnConnectionFailure(retryOnConnectionFailure)
+                                .addInterceptor(HttpLoggingFactory.createHttpLoggingInterceptor(loggingLevel, loggingStrategy));
                     }
                     boolean autoSetHeader = configuration.getApiDataSource().isAutoSetHeader();
                     HeaderProcessor headerProcessor = apiDataSource.getHeaderProcessor();
@@ -294,18 +295,18 @@ public class RetrofitDelegate implements ProxyDelegate {
                         Objects.requireNonNull(headerProcessor, "HeaderProcessor must not be null when autoSetHeader is enabled");
                         okHttpBuilder.addInterceptor(new DefaultHeaderInterceptor(headerProcessor, apiDataSource.getContextManager()));
                     }
-                    GsonBuilder gsonBuilder = apiDataSource.getGsonBuilder();
-                    if (Objects.isNull(gsonBuilder)) {
-                        gsonBuilder = new GsonBuilder();
+                    Converter.Factory converterFactory = apiDataSource.getConverterFactory();
+                    if (Objects.isNull(converterFactory)) {
+                        GsonBuilder gsonBuilder = new GsonBuilder();
                         gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
                         gsonBuilder.setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE);
+                        converterFactory = GsonConverterFactory.create(gsonBuilder.create());
                     }
-
                     retrofitClient = new Retrofit.Builder()
                             .baseUrl(apiDataSource.getBaseUrl())
                             .validateEagerly(validateEagerly)
                             .client(okHttpBuilder.build())
-                            .addConverterFactory(GsonConverterFactory.create(gsonBuilder.create()))
+                            .addConverterFactory(converterFactory)
                             .build();
                 }
             }

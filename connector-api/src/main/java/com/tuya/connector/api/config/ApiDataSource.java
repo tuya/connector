@@ -9,6 +9,7 @@ import com.tuya.connector.api.token.TokenManager;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import okhttp3.OkHttpClient;
+import retrofit2.Converter;
 
 import java.util.Objects;
 
@@ -132,5 +133,5 @@ public class ApiDataSource {
      */
     OkHttpClient specificClient;
 
-    GsonBuilder gsonBuilder;
+    Converter.Factory converterFactory;
 }
