@@ -25,4 +25,5 @@ public class Result<T> implements Serializable {
     Boolean success;
     Long t;
     T result;
+    String tid;
 }

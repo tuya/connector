@@ -114,7 +114,7 @@ public class RetrofitDelegate implements ProxyDelegate {
             Integer retCode = body.getCode();
             String retMsg = body.getMsg();
             if (Objects.nonNull(retCode)) {
-                log.warn("Result(code={},msg={},t={}) is not successful for requeset: {}", retCode, retMsg, body.getT(), Utils.classMethodSignature(method, args));
+                log.warn("Result(code={},msg={},t={},tid={}) is not successful for requeset: {}", retCode, retMsg, body.getT(), body.getTid(), Utils.classMethodSignature(method, args));
                 ErrorContext.set(new ErrorInfo(retCode + "", retMsg));
                 throw ExceptionFactory.ofCode(retCode, retMsg, body.getT());
             }
